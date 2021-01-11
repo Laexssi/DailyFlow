@@ -1,0 +1,43 @@
+
+
+
+.main-screen {
+  display: flex;
+  flex-flow: column nowrap;
+  background-color: #FAFAFA;
+  @extend %full-screen;
+}
+
+.main-screen__content-container {
+  display: flex;
+  flex-flow: column nowrap;
+  flex-grow: 1;
+  min-height: 480px;
+  overflow: hidden;
+}
+
+.main-screen__content {
+  display: flex;
+  flex-flow: column nowrap;
+  flex-grow: 1;
+  overflow: hidden;
+  box-sizing: border-box;
+  @include padding-with-breakpoint();
+
+  @include between-children {
+    @include margin-with-breakpoint(0 0 16px 0, 0 0 16px 0, 0 0 12px 0);
+  }
+}
+.main-screen__content--scroll {
+  overflow: auto;
+}
+
+// --------------------------------------------------------------------
+
+.main-screen-animation-enter-active, .main-screen-animation-leave-active {
+  transition: opacity 0.2s;
+}
+
+.main-screen-animation-enter, .main-screen-animation-leave-to {
+  opacity: 0;
+}

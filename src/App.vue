@@ -1,32 +1,48 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+  <div class="main-screen" id="app">
+    <v-app>
+      <TheHeader/>
+      <router-view/>
+    </v-app>
   </div>
 </template>
 
+<script>
+  import TheHeader from 'components/TheHeader';
+
+  import { mapActions, mapMutations, mapGetters } from 'vuex';
+  import { auth } from 'firebaseDir';
+
+  export default {
+    name: 'App',
+    components: {
+      TheHeader,
+    },
+    async created() {
+      const setStoreUser = this.setUser.bind(this);
+      const setStoreIsLogged = this.setIsLogged.bind(this);
+      auth.onAuthStateChanged((user) => {
+        if (!user) {
+          setStoreIsLogged(false);
+          this.$router.push({ name: 'login' });
+          return;
+        }
+        setStoreUser({ ...user, isNewUser: false });
+        setStoreIsLogged(true);
+      });
+    },
+    methods: {
+      ...mapActions({ loginWithGoogle: 'auth/login' }),
+      ...mapMutations({ setUser: 'auth/setUser', setIsLogged: 'auth/setIsLogged' }),
+    },
+    computed: {
+      ...mapGetters({ getUser: 'auth/getUser' }),
+      isLogged() {
+        return !!this.getUser;
+      },
+    },
+  };
+</script>
+
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
 </style>

@@ -1,0 +1,15 @@
+@import './_variables.scss';
+
+// Modules
+@import './modules/screen.scss';
+
+body {
+  font-size: 14px;
+  font-family: $preferred-font;
+  line-height: normal;
+  -webkit-tap-highlight-color: transparent;
+}
+
+* {
+  font-family: $preferred-font;
+}
