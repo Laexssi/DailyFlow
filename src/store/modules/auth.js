@@ -5,10 +5,17 @@ export default {
   state: {
     user: null,
     isLogged: false,
+    isInited: false,
   },
   getters: {
     getUser(state) {
       return state.user;
+    },
+    getIsLogged(state) {
+      return state.isLogged;
+    },
+    getIsInited(state) {
+      return state.isInited;
     },
   },
   mutations: {
@@ -17,34 +24,38 @@ export default {
         displayName: user.displayName,
         email: user.email,
         uid: user.uid,
-        avatarURL: user.photoURL,
+        photoURL: user.photoURL,
         isNewUser: user.isNewUser,
       };
     },
     setIsLogged(state, value) {
       state.isLogged = value;
     },
+    setIsInited(state, value) {
+      state.isInited = value;
+    },
   },
   actions: {
-    login({ commit }) {
+    login({ commit, dispatch }) {
       return auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
         .then(({ user, additionalUserInfo }) => {
-          commit('setUser', { ...user, ...additionalUserInfo });
+          const userWithAdditionalInfo = { ...user, ...additionalUserInfo };
+          console.log('add', additionalUserInfo);
+          console.log('vuex user', user);
+          commit('setUser', userWithAdditionalInfo);
           commit('setIsLogged', true);
-          return user;
-          // use user vuex module to add users
-          // if (additionalUserInfo.isNewUser) {
-          //   db.collection('users').add({
-          //     displayName: user.displayName,
-          //     email: user.email,
-          //     uid: user.uid,
-          //     avatarURL: user.photoURL,
-          //     isNewUser: additionalUserInfo.isNewUser,
-          //   });
-          // }
+          return userWithAdditionalInfo;
         })
-        .catch(() => {
-        commit('setIsLogged', false);
+        .then(async (user) => {
+          console.log('user in login', user);
+          if (user.isNewUser) {
+            await dispatch('user/createUser', user, { root: true });
+          }
+          return user;
+        })
+        .catch((e) => {
+          commit('setIsLogged', false);
+          console.warn(e);
         });
     },
     logout({ commit }) {

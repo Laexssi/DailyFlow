@@ -6,6 +6,7 @@ module.exports = {
       alias: {
         src: path.resolve(__dirname, 'src'),
         screens: path.resolve(__dirname, 'src/screens'),
+        store: path.resolve(__dirname, 'src/store'),
         styles: path.resolve(__dirname, 'src/styles'),
         components: path.resolve(__dirname, 'src/components'),
         firebaseDir: path.resolve(__dirname, 'src/fb-config'),

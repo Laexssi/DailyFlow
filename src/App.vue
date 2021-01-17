@@ -1,14 +1,26 @@
 <template>
-  <div class="main-screen" id="app">
-    <v-app>
+  <v-app>
+    <div v-if="!loading" class="main-screen" id="app">
       <TheHeader/>
+
       <router-view/>
-    </v-app>
-  </div>
+
+      <Navigation/>
+    </div>
+
+    <div
+    v-else
+    class="main-screen__loader-container">
+      <v-progress-circular
+      indeterminate
+      color="primary"/>
+    </div>
+  </v-app>
 </template>
 
 <script>
   import TheHeader from 'components/TheHeader';
+  import Navigation from 'components/Navigation';
 
   import { mapActions, mapMutations, mapGetters } from 'vuex';
   import { auth } from 'firebaseDir';
@@ -17,30 +29,40 @@
     name: 'App',
     components: {
       TheHeader,
+      Navigation,
     },
     async created() {
-      const setStoreUser = this.setUser.bind(this);
-      const setStoreIsLogged = this.setIsLogged.bind(this);
       auth.onAuthStateChanged((user) => {
+        console.log('on uth state change', user);
+        this.setIsLogged(false);
+        this.setIsInited(true);
+        if (this.$router.currentRoute.name === 'login') {
+          this.loading = false;
+          return;
+        }
+
         if (!user) {
-          setStoreIsLogged(false);
+          console.log('no user');
+          this.loading = false;
           this.$router.push({ name: 'login' });
           return;
         }
-        setStoreUser({ ...user, isNewUser: false });
-        setStoreIsLogged(true);
+
+        this.setUser({ ...user, isNewUser: false });
+        this.setIsLogged(true);
+        this.loading = false;
       });
     },
     methods: {
       ...mapActions({ loginWithGoogle: 'auth/login' }),
-      ...mapMutations({ setUser: 'auth/setUser', setIsLogged: 'auth/setIsLogged' }),
+      ...mapMutations({ setUser: 'auth/setUser', setIsLogged: 'auth/setIsLogged', setIsInited: 'auth/setIsInited' }),
     },
     computed: {
-      ...mapGetters({ getUser: 'auth/getUser' }),
-      isLogged() {
-        return !!this.getUser;
-      },
+      ...mapGetters({ getUser: 'auth/getUser', isLogged: 'auth/getIsLogged' }),
     },
+    data: () => ({
+      loading: true,
+    }),
   };
 </script>
 

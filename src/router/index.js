@@ -3,6 +3,9 @@ import VueRouter from 'vue-router';
 import Login from 'screens/Login';
 import Plan from 'screens/Plan';
 
+import { auth } from 'firebaseDir';
+import store from 'store';
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -15,6 +18,7 @@ const routes = [
     path: '/plan',
     name: 'plan',
     component: Plan,
+    meta: { requiresAuth: true },
   },
   {
     path: '*',
@@ -27,4 +31,20 @@ const router = new VueRouter({
   routes,
 });
 
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  const isAuthenticated = auth.currentUser;
+  const isInited = store.getters['auth/getIsInited'];
+  console.log('isInited', isInited);
+
+  console.log('isAuth in route', auth.currentUser);
+  console.log('before route curr user', isAuthenticated);
+  if (requiresAuth && !isAuthenticated && isInited) {
+    console.log('redirect');
+    next('/login');
+    return;
+  }
+
+  next();
+});
 export default router;

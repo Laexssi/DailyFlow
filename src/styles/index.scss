@@ -3,6 +3,10 @@
 // Modules
 @import './modules/screen.scss';
 
+html {
+  overflow: hidden;
+}
+
 body {
   font-size: 14px;
   font-family: $preferred-font;

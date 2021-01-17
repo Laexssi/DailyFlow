@@ -3,11 +3,15 @@
   v-if="showHeader"
   class="main-header">
     <div class="main-header__content">
-      <v-btn
-      color="white"
-      @click="logoutHandler">
-        logout
-      </v-btn>
+      <div class="main_header__controls">
+        <v-btn
+        icon
+        @click="logoutHandler">
+          <v-icon color="black">
+            mdi-exit-to-app
+          </v-icon>
+        </v-btn>
+      </div>
     </div>
   </div>
 </template>
@@ -43,7 +47,7 @@
     right: 0;
     left: 0;
 
-    background-color: $primary-color;
+    background-color: $background-color;
     z-index: 6;
   }
 
@@ -61,5 +65,9 @@
     @include between-children() {
       margin-right: 12px;
     }
+  }
+
+  .main_header__controls {
+    margin-left: auto;
   }
 </style>
