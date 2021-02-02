@@ -1,12 +1,12 @@
 <template>
-  <div class="main-screen__content">
-    Plans
+  <div>
+    ActivityCardEditor
   </div>
 </template>
 
 <script>
   export default {
-    name: 'Plans',
+    name: 'ActivityCardEditor',
   };
 </script>
 

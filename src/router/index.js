@@ -1,7 +1,10 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Login from 'screens/Login';
-import Plan from 'screens/Plan';
+
+const Login = () => import(/* webpackChunkName: "login" */'screens/Login');
+const Plan = () => import(/* webpackChunkName: "plan" */'screens/Plan');
+const Library = () => import(/* webpackChunkName: "library" */'screens/Library');
+const Analytics = ()/* webpackChunkName: "analytics" */ => import('screens/Analytics');
 
 import { auth } from 'firebaseDir';
 import store from 'store';
@@ -18,6 +21,18 @@ const routes = [
     path: '/plan',
     name: 'plan',
     component: Plan,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/library',
+    name: 'library',
+    component: Library,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/analytics',
+    name: 'analytics',
+    component: Analytics,
     meta: { requiresAuth: true },
   },
   {

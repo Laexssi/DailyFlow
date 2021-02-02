@@ -4,6 +4,14 @@
   class="main-header">
     <div class="main-header__content">
       <div class="main_header__controls">
+        <v-avatar
+        v-if="user"
+        size="32">
+          <img
+          :src="user.photoURL"
+          :alt="user.displayName">
+        </v-avatar>
+
         <v-btn
         icon
         @click="logoutHandler">
@@ -17,7 +25,7 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex';
+  import { mapActions, mapGetters } from 'vuex';
 
   export default {
     name: 'TheHeader',
@@ -28,6 +36,7 @@
       },
     },
     computed: {
+      ...mapGetters({ user: 'auth/getUser' }),
       showHeader() {
         return this.$route.name !== 'login';
       },
@@ -46,6 +55,7 @@
     top: 0;
     right: 0;
     left: 0;
+    height: $header-height;
 
     background-color: $background-color;
     z-index: 6;
@@ -60,7 +70,7 @@
 
     height: $header-height;
     box-sizing: border-box;
-    padding: 0 12px;
+    padding: 16px;
 
     @include between-children() {
       margin-right: 12px;
@@ -69,5 +79,9 @@
 
   .main_header__controls {
     margin-left: auto;
+
+    @include between-children() {
+      margin-right: 8px;
+    }
   }
 </style>

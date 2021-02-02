@@ -1,15 +1,12 @@
 <template>
   <div class="main-screen__content">
-    <ActivityCard/>
+    Analytics
   </div>
 </template>
 
 <script>
-  import ActivityCard from 'components/ActivityCard';
-
   export default {
-    name: 'Library',
-    components: { ActivityCard },
+    name: 'Index',
   };
 </script>
 
