@@ -1,7 +1,8 @@
 <template>
-  <div class="navigation-wrapper">
+  <div
+  v-if="showNavigation"
+  class="navigation-wrapper">
     <div
-    v-if="showNavigation"
     class="navigation">
       <v-btn
       v-for="(item, index) of navigationControls"
@@ -52,7 +53,8 @@
     <v-btn
     fab
     elevation="0"
-    color="#333333">
+    color="#333333"
+    @click="addActivityHandler">
       <v-icon color="white">
         mdi-plus
       </v-icon>
@@ -61,16 +63,21 @@
 </template>
 
 <script>
+
   export default {
     name: 'Navigation',
     methods: {
       switchRouteHandler(route) {
         this.$router.push({ name: route });
       },
+      addActivityHandler() {
+        this.$router.push({ name: 'new activity' });
+      },
     },
     computed: {
       showNavigation() {
-        return this.$route.name !== 'login';
+        const noNavRoutes = ['login', 'new activity', 'edit activity'];
+        return !noNavRoutes.includes(this.$route.name);
       },
       navigationControls() {
         return [{

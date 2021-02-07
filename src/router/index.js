@@ -5,6 +5,7 @@ const Login = () => import(/* webpackChunkName: "login" */'screens/Login');
 const Plan = () => import(/* webpackChunkName: "plan" */'screens/Plan');
 const Library = () => import(/* webpackChunkName: "library" */'screens/Library');
 const Analytics = ()/* webpackChunkName: "analytics" */ => import('screens/Analytics');
+const ActivityEditor = ()/* webpackChunkName: "activity" */ => import('screens/ActivityEditor');
 
 import { auth } from 'firebaseDir';
 import store from 'store';
@@ -33,6 +34,18 @@ const routes = [
     path: '/analytics',
     name: 'analytics',
     component: Analytics,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/activity/new',
+    name: 'new activity',
+    component: ActivityEditor,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/activity/edit/:id',
+    name: 'edit activity',
+    component: ActivityEditor,
     meta: { requiresAuth: true },
   },
   {

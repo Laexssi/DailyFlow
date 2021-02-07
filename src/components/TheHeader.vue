@@ -3,6 +3,23 @@
   v-if="showHeader"
   class="main-header">
     <div class="main-header__content">
+      <div class="main-header__navigation">
+        <v-btn
+        v-if="showRouterBackButton"
+        icon
+        large
+        class="mr-2"
+        @click="routerBackHandler">
+          <v-icon>
+            mdi-arrow-left
+          </v-icon>
+        </v-btn>
+
+        <div class="main-header__navigation-name">
+          {{ capitalizeFirstLetter($route.name) }}
+        </div>
+      </div>
+
       <div class="main_header__controls">
         <v-avatar
         v-if="user"
@@ -26,6 +43,7 @@
 
 <script>
   import { mapActions, mapGetters } from 'vuex';
+  import capitalizeFirstLetter from 'helpers/capitalizeFirstLetter';
 
   export default {
     name: 'TheHeader',
@@ -34,14 +52,22 @@
       logoutHandler() {
         this.logout();
       },
+      routerBackHandler() {
+        this.$router.go(-1);
+      },
     },
     computed: {
-      ...mapGetters({ user: 'auth/getUser' }),
+      ...mapGetters({
+        user: 'auth/getUser',
+        showRouterBackButton: 'appState/getShowRouterBackButton',
+      }),
       showHeader() {
         return this.$route.name !== 'login';
       },
     },
-    data: () => ({}),
+    data: () => ({
+      capitalizeFirstLetter,
+    }),
   };
 </script>
 
@@ -75,6 +101,16 @@
     @include between-children() {
       margin-right: 12px;
     }
+  }
+
+  .main-header__navigation {
+    display: flex;
+    align-items: center;
+  }
+
+  .main-header__navigation-name {
+    font-size: 20px;
+    font-weight: 500;
   }
 
   .main_header__controls {

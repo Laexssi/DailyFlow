@@ -1,25 +1,7 @@
 <template>
   <div class="activity-card">
     <div class="activity-card__header">
-      <v-menu offsetY>
-        <template
-        v-slot:activator="{ on, attrs }">
-          <v-btn
-          class="emoji-button"
-          text
-          small
-          v-bind="attrs"
-          v-on="on">
-            {{ selectedEmoji }}
-          </v-btn>
-        </template>
-
-        <VEmojiPicker
-        @select="selectEmoji"
-        :showCategories="false"
-        :continuousList="true"
-        :customEmojis="emojiList"/>
-      </v-menu>
+      <span>emoji</span>
 
       <v-btn
       icon
@@ -83,21 +65,9 @@
 </template>
 
 <script>
-  import { VEmojiPicker, emojisDefault } from 'v-emoji-picker';
-
   export default {
     name: 'ActivityCard',
-    components: {
-      VEmojiPicker,
-    },
-    created() {
-      const randomIndex = Math.floor(Math.random() * 700);
-      this.selectedEmoji = this.emojiList[randomIndex].data;
-    },
     methods: {
-      selectEmoji(emoji) {
-        this.selectedEmoji = emoji.data;
-      },
       onCompleteHandler() {
       },
     },
@@ -114,13 +84,8 @@
           lastCompleteDate: null,
         };
       },
-      emojiList() {
-        return emojisDefault.filter(({ category }) => this.emojiCategories.has(category));
-      },
     },
     data: () => ({
-      selectedEmoji: '',
-      emojiCategories: new Set(['Activity', 'Peoples', 'Foods', 'Nature', 'Places']),
     }),
   };
 </script>
@@ -147,16 +112,6 @@
     justify-content: space-between;
 
     align-items: center;
-  }
-
-  .emoji-button {
-    justify-content: start;
-    padding-left: 6px !important;
-    min-width: 0;
-    span {
-      text-align: start;
-      font-size: 20px;
-    }
   }
 
   .activity-card__name {
