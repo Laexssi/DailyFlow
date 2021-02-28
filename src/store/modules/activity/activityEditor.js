@@ -5,9 +5,9 @@ const activitySchema = {
   cooldown: 0,
   cooldown_expiration_date: 0,
   emoji: null,
-  label: null,
-  label_color: null,
+  labels: [],
   last_complete_day: null,
+  complete_dates: null,
   name: null,
   uid: null,
   userId: null,
@@ -22,7 +22,10 @@ export default {
     getActivity(state) {
       return state.activity;
     },
-  },
+    getLabels(state) {
+      return state.activity.labels;
+    },
+   },
   mutations: {
     setActivity(state, value) {
       state.activity = value;
@@ -30,12 +33,25 @@ export default {
     setActivityKey(state, { key, value }) {
       state.activity[key] = value;
     },
+    setLabels(state, value) {
+      state.activity.labels = value;
+    },
+    addLabel(state, value) {
+      state.activity.labels.push(value);
+    },
+    removeLabel(state, index) {
+      state.activity.labels = state.activity.labels.filter((item, idx) => idx !== index);
+    },
   },
   actions: {
-    async createActivity(context, payload) {
-      console.log('payload', payload);
+    async createActivity({ getters, rootGetters }, payload) {
+      const newActivity = getters.getActivity || payload;
+      const { uid } = rootGetters['auth/getUser'];
+      if (!uid) throw new Error('user not found');
+      if (!newActivity.name) throw new Error('name not found');
+      console.log(newActivity);
       try {
-        const activityRef = await firestore.collection('activity').add(payload);
+        const activityRef = await firestore.collection('activity').add({ ...newActivity, userId: uid });
         const { id: activityId } = activityRef;
         console.log('activityId', activityId);
         this.firestore.collection('activity').doc(activityId).update({ id: activityId });

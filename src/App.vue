@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app class="main-screen__container">
     <div v-if="!loading" class="main-screen" id="app">
       <TheHeader/>
 
@@ -67,4 +67,8 @@
 </script>
 
 <style lang="scss">
+  .main-screen__container {
+    min-width: 320px !important;
+    overflow-x: auto;
+  }
 </style>

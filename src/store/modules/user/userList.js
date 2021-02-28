@@ -22,7 +22,7 @@ export default {
     async updateList({ commit }, payload) {
       console.log(payload);
       const data = await firestore.collection('users').get();
-      commit.addToList(data);
+      commit('addToList', data);
     },
   },
 };

@@ -71,12 +71,12 @@
         this.$router.push({ name: route });
       },
       addActivityHandler() {
-        this.$router.push({ name: 'new activity' });
+        this.$router.push({ name: 'activity-editor-new' });
       },
     },
     computed: {
       showNavigation() {
-        const noNavRoutes = ['login', 'new activity', 'edit activity'];
+        const noNavRoutes = ['login', 'activity-editor-edit', 'activity-editor-new'];
         return !noNavRoutes.includes(this.$route.name);
       },
       navigationControls() {

@@ -16,7 +16,7 @@
         </v-btn>
 
         <div class="main-header__navigation-name">
-          {{ capitalizeFirstLetter($route.name) }}
+          {{ getRouteNameText() }}
         </div>
       </div>
 
@@ -54,6 +54,12 @@
       },
       routerBackHandler() {
         this.$router.go(-1);
+      },
+      getRouteNameText() {
+        return {
+          'activity-editor-new': 'Edit activity',
+          'activity-editor-edit': 'New activity',
+        }[this.$route.name] || capitalizeFirstLetter(this.$route.name);
       },
     },
     computed: {

@@ -11,9 +11,13 @@ import activity from './modules/activity';
 import activityEditor from './modules/activity/activityEditor';
 import activityList from './modules/activity/activityList';
 
+import label from './modules/label';
+import labelEditor from './modules/label/labelEditor';
+import labelList from './modules/label/labelList';
+
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   state: {
   },
   mutations: {
@@ -30,5 +34,11 @@ export default new Vuex.Store({
     activity,
     activityEditor,
     activityList,
+
+    label,
+    labelEditor,
+    labelList,
   },
 });
+
+export default store;

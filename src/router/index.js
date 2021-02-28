@@ -38,13 +38,13 @@ const routes = [
   },
   {
     path: '/activity/new',
-    name: 'new activity',
+    name: 'activity-editor-new',
     component: ActivityEditor,
     meta: { requiresAuth: true },
   },
   {
     path: '/activity/edit/:id',
-    name: 'edit activity',
+    name: 'activity-editor-edit',
     component: ActivityEditor,
     meta: { requiresAuth: true },
   },
