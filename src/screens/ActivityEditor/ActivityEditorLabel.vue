@@ -23,16 +23,26 @@
         </div>
       </div>
 
-      <div class="activity-editor__input-wrapper">
+      <div
+      class="activity-editor__input-wrapper">
         <v-text-field
+        v-if="!createMode"
         v-model="search"
         dark
         outlined
         placeholder="Search"
         appendIcon="mdi-magnify"/>
+
+        <v-text-field
+        v-else
+        v-model="newLabelName"
+        dark
+        outlined
+        placeholder="Name"/>
       </div>
 
       <div
+      v-if="!createMode"
       class="activity-editor__label-list">
         <div
         v-for="(item) in filteredLabels"
@@ -54,38 +64,65 @@
           </div>
 
           <v-btn
-          dark>
+          dark
+          color="#333333"
+          depressed>
             <v-icon>
               mdi-pencil
             </v-icon>
           </v-btn>
         </div>
       </div>
-      <!--      <div class="activity-editor__color-picker mb-4">-->
-      <!--        <div-->
-      <!--        v-for="(item, index) in colorList"-->
-      <!--        :key="index"-->
-      <!--        :style="{ backgroundColor: item}"-->
-      <!--        class="activity-editor__color-button"-->
-      <!--        :class="{ 'activity-editor__color-button&#45;&#45;mask' : currentColor !== item }"-->
-      <!--        @click="currentColor = item"/>-->
-      <!--      </div>-->
-      <!--      <v-text-field-->
-      <!--      v-model="labelName"-->
-      <!--      dark-->
-      <!--      outlined-->
-      <!--      label="Name"/>-->
 
-      <!--      <v-btn-->
-      <!--      large-->
-      <!--      width="100%"-->
-      <!--      @click="createLabelHandler">-->
-      <!--        <v-icon-->
-      <!--        left>-->
-      <!--          mdi-plus-->
-      <!--        </v-icon>-->
-      <!--        Create-->
-      <!--      </v-btn>-->
+      <div
+      v-else
+      class="activity-editor__color-picker__container">
+        <span
+        class="activity-editor__color-picker__text">
+          Please select color or we set it random
+        </span>
+
+        <div class="activity-editor__color-picker">
+          <div
+          v-for="(item, index) in colorList"
+          :key="index"
+          :style="{ backgroundColor: item}"
+          class="activity-editor__color-button"
+          @click="newLabelColor = item">
+            <v-icon
+            v-if="newLabelColor === item"
+            color="white">
+              mdi-check
+            </v-icon>
+          </div>
+        </div>
+      </div>
+
+      <v-btn
+      v-if="!createMode"
+      dark
+      xLarge
+      color="#333333"
+      @click="createMode = true">
+        Create new
+
+        <v-icon>
+          mdi-plus
+        </v-icon>
+      </v-btn>
+
+      <v-btn
+      v-else
+      xLarge
+      :dark="!newLabelName"
+      :disabled="!newLabelName"
+      @click="createLabelHandler">
+        Create
+
+        <v-icon>
+          mdi-plus
+        </v-icon>
+      </v-btn>
     </div>
   </div>
 </template>
@@ -103,8 +140,8 @@
     methods: {
       ...mapMutations({
         setCurrentLabels: 'activityEditor/setLabels',
+        addLabelToCurrentActivity: 'activityEditor/addLabel',
         deleteLabel: 'label/deleteLabel',
-        addLabel: 'activityList/addLabel',
       }),
       ...mapActions({
         createLabel: 'labelEditor/createLabel',
@@ -116,11 +153,26 @@
         }).filter((item) => item);
         this.setCurrentLabels(currentLabels);
       },
-      createLabelHandler() {
-        this.createLabel({ color: this.currentColor, name: this.currentLabelName });
-        this.currentColor = null;
-        this.currentLabelName = null;
-        this.$emit('close');
+      async createLabelHandler() {
+        if (!this.newLabelColor) this.setRandomLabelColor();
+        const newLabelId = await this.createLabel({ color: this.newLabelColor, name: this.newLabelName });
+        await this.updateLabelList();
+
+        console.log('newLabelId', newLabelId);
+        console.log('list', this.allLabels);
+
+        const newLabel = find(this.allLabels, ({ id }) => id === newLabelId);
+        console.log(newLabel);
+        this.addLabelToCurrentActivity(newLabel);
+        this.selectedLabels.push(newLabel.id);
+
+        this.newLabelColor = null;
+        this.newLabelName = null;
+        this.createMode = false;
+      },
+      setRandomLabelColor() {
+        const randomIndex = Math.floor(Math.random() * this.colorList.length);
+        this.newLabelColor = this.colorList[randomIndex];
       },
     },
     computed: {
@@ -134,17 +186,17 @@
       },
       labelName: {
         get() {
-          return this.currentLabelName;
+          return this.newLabelName;
         },
         set: debounce(function set(value) {
-          this.currentLabelName = value;
+          this.newLabelName = value;
         }, 300),
       },
     },
     data: () => ({
-      colorList: ['#EB5757', '#F2994A', '#219653', '#2F80ED', '#9B51E0'],
-      currentColor: null,
-      currentLabelName: null,
+      colorList: ['#EB5757', '#F2994A', '#F2C94C', '#219653', '#6FCF97', '#2F80ED', '#56CCF2', '#9B51E0', '#EB57B0'],
+      newLabelColor: null,
+      newLabelName: null,
       selectedLabels: [],
       createMode: false,
       search: '',
@@ -179,7 +231,7 @@
   }
 
   .activity-editor__add-label__create-text {
-    justify-self: center;
+    margin-right: calc(50% - 59px);
   }
 
   .activity-editor__input-wrapper {
@@ -189,12 +241,14 @@
   .activity-editor__label-list {
     display: flex;
     flex-direction: column;
-    padding: 11px 16px 28px 16px;
+    padding: 11px 0 28px 0;
     height: 226px;
     overflow-y: auto;
+    border-top: 1px solid white;
+    border-bottom: 1px solid white;
 
     @include between-children() {
-      margin-top: 16px;
+      margin-bottom: 16px;
     }
   }
 
@@ -203,6 +257,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    padding: 0 16px;
   }
 
   .activity-editor__label-list__item-label {
@@ -212,5 +267,45 @@
     @include between-children() {
       margin-right: 8px;
     }
+  }
+
+  .activity-editor__color-picker__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 226px;
+    padding: 0 16px;
+
+    @include between-children() {
+      margin-bottom: 24px;
+    }
+  }
+
+  .activity-editor__color-picker__text {
+    color: white;
+    font-size: 16px;
+  }
+
+  .activity-editor__color-picker {
+    display: flex;
+    flex-flow: row wrap;
+    align-content: center;
+
+    @include between-children() {
+      margin-right: 18px;
+      margin-bottom: 24px;
+    }
+  }
+
+  .activity-editor__color-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+
+    cursor: pointer;
   }
 </style>

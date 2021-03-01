@@ -126,7 +126,7 @@
 
     padding: 12px 14px;
 
-    background-color: $navigation-background-color;
+    background-color: $dark-gray;
     @include between-children() {
       margin-right: 16px;
     }

@@ -26,9 +26,9 @@ export default {
       if (!newLabel.name) throw new Error('name not found');
       try {
         const labelRef = await firestore.collection('label').add({ ...newLabel, userId: uid });
-        const { id: labelId } = labelRef;
-        this.firestore.collection('label').doc(labelId).update({ id: labelId });
-        return labelId;
+        const { id } = labelRef;
+        await firestore.collection('label').doc(id).update({ id });
+        return id;
       } catch (err) {
         return err;
       }

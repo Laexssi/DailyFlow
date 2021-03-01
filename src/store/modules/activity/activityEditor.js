@@ -9,7 +9,7 @@ const activitySchema = {
   last_complete_day: null,
   complete_dates: null,
   name: null,
-  uid: null,
+  id: null,
   userId: null,
 };
 
@@ -54,7 +54,7 @@ export default {
         const activityRef = await firestore.collection('activity').add({ ...newActivity, userId: uid });
         const { id: activityId } = activityRef;
         console.log('activityId', activityId);
-        this.firestore.collection('activity').doc(activityId).update({ id: activityId });
+        await firestore.collection('activity').doc(activityId).update({ id: activityId });
         return activityId;
       } catch (err) {
         return err;

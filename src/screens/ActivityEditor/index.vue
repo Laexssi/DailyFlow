@@ -122,16 +122,18 @@
       </div>
 
       <div class="activity-editor__labels">
-        <v-chip
-        v-for="(item) of currentLabels"
-        :key="item.id"
-        class="mr-2 mb-2"
-        :color="item.color"
-        textColor="white"
-        close
-        @click:close="removeLabel(index)">
-          {{ item.name }}
-        </v-chip>
+        <div v-if="currentLabels.length">
+          <v-chip
+          v-for="(item) of currentLabels"
+          :key="item.id"
+          class="mr-2 mb-2"
+          :color="item.color"
+          textColor="white"
+          close
+          @click:close="removeLabel(index)">
+            {{ item.name }}
+          </v-chip>
+        </div>
       </div>
 
       <div
@@ -186,13 +188,13 @@
     methods: {
       ...mapMutations({
         setActivityKey: 'activityEditor/setActivityKey',
-        createActivity: 'activity/createActivity',
         removeLabel: 'activity/removeLabel',
         setShowRouterBackButton: 'appState/setShowRouterBackButton',
       }),
       ...mapActions({
         updateActivityList: 'activityList/updateList',
         updateLabelList: 'labelList/updateList',
+        createActivity: 'activityEditor/createActivity',
       }),
       createActivityHandler() {
         this.createActivity();
@@ -356,31 +358,11 @@
 
   .activity-editor__add-label-container {
     width: 100%;
-    height: 100%;
-    padding: 16px;
+    height: 100%;;
     background-color: #333333;
 
     display: flex;
     flex-direction: column;
-  }
-
-  .activity-editor__color-picker {
-    display: flex;
-    align-items: center;
-
-    @include between-children() {
-      margin-right: 18px;
-    }
-  }
-
-  .activity-editor__color-button {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-
-    transition: all .3s ease;
-
-    cursor: pointer;
   }
 
   .activity-editor__color-button--mask {
