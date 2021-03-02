@@ -39,25 +39,24 @@ export default {
     addLabel(state, value) {
       state.activity.labels.push(value);
     },
-    removeLabel(state, index) {
-      state.activity.labels = state.activity.labels.filter((item, idx) => idx !== index);
+    removeLabel(state, id) {
+      state.activity.labels = state.activity.labels.filter((item) => item !== id);
     },
   },
   actions: {
-    async createActivity({ getters, rootGetters }, payload) {
+    async createActivity({ getters, rootGetters, commit }, payload) {
       const newActivity = getters.getActivity || payload;
       const { uid } = rootGetters['auth/getUser'];
       if (!uid) throw new Error('user not found');
       if (!newActivity.name) throw new Error('name not found');
-      console.log(newActivity);
       try {
         const activityRef = await firestore.collection('activity').add({ ...newActivity, userId: uid });
         const { id: activityId } = activityRef;
-        console.log('activityId', activityId);
         await firestore.collection('activity').doc(activityId).update({ id: activityId });
+        commit('setActivity', null);
         return activityId;
       } catch (err) {
-        return err;
+        return Promise.reject(err);
       }
     },
   },

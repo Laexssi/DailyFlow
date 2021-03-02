@@ -57,8 +57,8 @@
       },
       getRouteNameText() {
         return {
-          'activity-editor-new': 'Edit activity',
-          'activity-editor-edit': 'New activity',
+          'activity-editor-new': 'New activity',
+          'activity-editor-edit': 'Edit activity',
         }[this.$route.name] || capitalizeFirstLetter(this.$route.name);
       },
     },

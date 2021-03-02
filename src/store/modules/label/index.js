@@ -16,10 +16,12 @@ export default {
     },
   },
   actions: {
-    async deleteLabel({ getters, rootActions }, payload) {
-      const id = getters.id || payload.id;
+    async deleteLabel({ getters, dispatch }, payload) {
+      console.log(payload);
+      const id = getters.getLabel?.id || payload.id;
       await firestore.collection('label').doc(id).delete();
-      rootActions('labelList/updateList');
+      await dispatch('labelList/updateList', null, { root: true });
+      return id;
     },
   },
 };

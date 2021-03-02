@@ -14,7 +14,7 @@
 
         <div v-else class="activity-editor__add-label__controls">
           <v-icon
-          @click="createMode = false"
+          @click="setCreateModeHandler"
           dark>
             mdi-arrow-left
           </v-icon>
@@ -66,7 +66,8 @@
           <v-btn
           dark
           color="#333333"
-          depressed>
+          depressed
+          @click="editLabelHandler(item)">
             <v-icon>
               mdi-pencil
             </v-icon>
@@ -99,7 +100,7 @@
       </div>
 
       <v-btn
-      v-if="!createMode"
+      v-if="!createMode && !editMode"
       dark
       xLarge
       color="#333333"
@@ -112,7 +113,7 @@
       </v-btn>
 
       <v-btn
-      v-else
+      v-if="createMode && !editMode"
       xLarge
       :dark="!newLabelName"
       :disabled="!newLabelName"
@@ -123,6 +124,25 @@
           mdi-plus
         </v-icon>
       </v-btn>
+
+      <div
+      v-if="editMode"
+      class="activity-editor__edit-controls">
+        <v-btn
+        class="activity-editor__edit-controls__button"
+        color="#EB5757"
+        @click="deleteLabelHandler">
+          Delete
+        </v-btn>
+
+        <v-btn
+        class="activity-editor__edit-controls__button"
+        dark
+        color="#333333"
+        @click="saveEditedLabelHandler">
+          Save
+        </v-btn>
+      </div>
     </div>
   </div>
 </template>
@@ -135,40 +155,70 @@
   export default {
     name: 'ActivityEditorLabel',
     created() {
-      this.selectedLabels = this.currentLabels.map(({ id }) => id);
+      if (!this.currentLabels.length) {
+        this.selectedLabels = [];
+        return;
+      }
+      this.selectedLabels = this.currentLabels;
     },
     methods: {
       ...mapMutations({
         setCurrentLabels: 'activityEditor/setLabels',
         addLabelToCurrentActivity: 'activityEditor/addLabel',
-        deleteLabel: 'label/deleteLabel',
+        setCurrentLabel: 'labelEditor/setLabel',
       }),
       ...mapActions({
         createLabel: 'labelEditor/createLabel',
+        editLabel: 'labelEditor/editLabel',
         updateLabelList: 'labelList/updateList',
+        deleteLabel: 'label/deleteLabel',
       }),
       syncCurrentLabels() {
-        const currentLabels = this.selectedLabels.map((selectedId) => {
-          return find(this.allLabels, ({ id }) => id === selectedId) || null;
-        }).filter((item) => item);
-        this.setCurrentLabels(currentLabels);
+        this.setCurrentLabels(this.selectedLabels);
+      },
+      editLabelHandler(item) {
+        this.setCurrentLabel(item);
+        this.createMode = true;
+        this.newLabelName = this.currentLabel.name;
+        this.newLabelColor = this.currentLabel.color;
       },
       async createLabelHandler() {
         if (!this.newLabelColor) this.setRandomLabelColor();
         const newLabelId = await this.createLabel({ color: this.newLabelColor, name: this.newLabelName });
         await this.updateLabelList();
 
-        console.log('newLabelId', newLabelId);
-        console.log('list', this.allLabels);
-
         const newLabel = find(this.allLabels, ({ id }) => id === newLabelId);
-        console.log(newLabel);
+
         this.addLabelToCurrentActivity(newLabel);
         this.selectedLabels.push(newLabel.id);
 
+        this.clearData();
+      },
+      async saveEditedLabelHandler() {
+        this.setCurrentLabel({
+          ...this.currentLabel,
+          name: this.newLabelName || this.currentLabel.name,
+          color: this.newLabelColor || this.currentLabel.color,
+        });
+        await this.editLabel();
+        await this.updateLabelList();
+
+        this.clearData();
+      },
+      async deleteLabelHandler() {
+        const deletedId = await this.deleteLabel(this.currentLabel);
+        await this.updateLabelList();
+        this.selectedLabels = this.selectedLabels.filter((id) => id !== deletedId);
+        this.clearData();
+      },
+      clearData() {
         this.newLabelColor = null;
         this.newLabelName = null;
         this.createMode = false;
+      },
+      setCreateModeHandler() {
+        this.createMode = false;
+        this.setCurrentLabel(null);
       },
       setRandomLabelColor() {
         const randomIndex = Math.floor(Math.random() * this.colorList.length);
@@ -179,6 +229,7 @@
       ...mapGetters({
         allLabels: 'labelList/getList',
         currentLabels: 'activityEditor/getLabels',
+        currentLabel: 'labelEditor/getLabel',
       }),
       filteredLabels() {
         if (!this.search) return this.allLabels;
@@ -191,6 +242,9 @@
         set: debounce(function set(value) {
           this.newLabelName = value;
         }, 300),
+      },
+      editMode() {
+        return this.createMode && this.currentLabel?.id;
       },
     },
     data: () => ({
@@ -307,5 +361,19 @@
     border-radius: 50%;
 
     cursor: pointer;
+  }
+
+  .activity-editor__edit-controls {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+
+    @include between-children() {
+      margin-right: 24px;
+    }
+  }
+
+  .activity-editor__edit-controls__button {
+    flex-grow: 1;
   }
 </style>

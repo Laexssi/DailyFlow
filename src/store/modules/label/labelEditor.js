@@ -30,7 +30,20 @@ export default {
         await firestore.collection('label').doc(id).update({ id });
         return id;
       } catch (err) {
-        return err;
+        return Promise.reject(err);
+      }
+    },
+    async editLabel({ getters, rootGetters }, payload) {
+      const editedLabel = getters.getLabel || payload;
+      const { uid } = rootGetters['auth/getUser'];
+      if (!uid) throw new Error('user not found');
+      if (!editedLabel.name) throw new Error('name not found');
+      try {
+        console.log(editedLabel);
+        await firestore.collection('label').doc(editedLabel.id).set(editedLabel);
+        return editedLabel;
+      } catch (err) {
+        return Promise.reject(err);
       }
     },
   },

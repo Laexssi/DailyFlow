@@ -89,6 +89,7 @@
           </template>
 
           <ActivityEditorLabel
+          v-if="showLabelPopup"
           @close="showLabelPopup = false"/>
 
           <!--          <div class="activity-editor__add-label-container">-->
@@ -122,7 +123,7 @@
       </div>
 
       <div class="activity-editor__labels">
-        <div v-if="currentLabels.length">
+        <div v-if="currentLabels.filter((item) => item).length">
           <v-chip
           v-for="(item) of currentLabels"
           :key="item.id"
@@ -130,7 +131,7 @@
           :color="item.color"
           textColor="white"
           close
-          @click:close="removeLabel(index)">
+          @click:close="removeLabel(item.id)">
             {{ item.name }}
           </v-chip>
         </div>
@@ -165,6 +166,7 @@
   import { mapGetters, mapMutations, mapActions } from 'vuex';
 
   import debounce from 'lodash/debounce';
+  import find from 'lodash/find';
 
   export default {
     name: 'ActivityEditor',
@@ -188,7 +190,7 @@
     methods: {
       ...mapMutations({
         setActivityKey: 'activityEditor/setActivityKey',
-        removeLabel: 'activity/removeLabel',
+        removeLabel: 'activityEditor/removeLabel',
         setShowRouterBackButton: 'appState/setShowRouterBackButton',
       }),
       ...mapActions({
@@ -196,8 +198,9 @@
         updateLabelList: 'labelList/updateList',
         createActivity: 'activityEditor/createActivity',
       }),
-      createActivityHandler() {
-        this.createActivity();
+      async createActivityHandler() {
+        await this.createActivity();
+        await this.$router.push({ name: 'library' });
       },
       randomizeEmoji() {
         const randomIndex = Math.floor(Math.random() * 700);
@@ -208,14 +211,15 @@
       ...mapGetters({
         activity: 'activityEditor/getActivity',
         activityList: 'activityList/getList',
-        currentLabels: 'activityEditor/getLabels',
+        labelList: 'labelList/getList',
+        currentLabelsById: 'activityEditor/getLabels',
       }),
       emojiList() {
         return emojisDefault.filter(({ category }) => this.emojiCategories.has(category));
       },
       selectEmoji: {
         get() {
-          return this.activity.emoji;
+          return this.activity?.emoji;
         },
         set(emoji) {
           this.setActivityKey({ key: 'emoji', value: emoji });
@@ -223,6 +227,9 @@
       },
       showCreateButton() {
         return this.activity.name;
+      },
+      currentLabels() {
+        return this.currentLabelsById.map((item) => find(this.labelList, ({ id }) => id === item));
       },
       activityName: {
         get() {
