@@ -91,34 +91,6 @@
           <ActivityEditorLabel
           v-if="showLabelPopup"
           @close="showLabelPopup = false"/>
-
-          <!--          <div class="activity-editor__add-label-container">-->
-          <!--            <div class="activity-editor__color-picker mb-4">-->
-          <!--              <div-->
-          <!--              v-for="(item, index) in colorList"-->
-          <!--              :key="index"-->
-          <!--              :style="{ backgroundColor: item}"-->
-          <!--              class="activity-editor__color-button"-->
-          <!--              :class="{ 'activity-editor__color-button&#45;&#45;mask' : currentColor !== item }"-->
-          <!--              @click="currentColor = item"/>-->
-          <!--            </div>-->
-          <!--            <v-text-field-->
-          <!--            v-model="labelName"-->
-          <!--            dark-->
-          <!--            outlined-->
-          <!--            label="Name"/>-->
-
-          <!--            <v-btn-->
-          <!--            large-->
-          <!--            width="100%"-->
-          <!--            @click="createLabelHandler">-->
-          <!--              <v-icon-->
-          <!--              left>-->
-          <!--                mdi-plus-->
-          <!--              </v-icon>-->
-          <!--              Create-->
-          <!--            </v-btn>-->
-          <!--          </div>-->
         </v-dialog>
       </div>
 
@@ -246,6 +218,12 @@
       cooldownTime: 0,
       showLabelPopup: false,
     }),
+    watch: {
+      cooldownTime(value) {
+        const normalizedValue = value * 60 * 60 * 1000;
+        this.setActivityKey({ key: 'cooldown', value: normalizedValue });
+      },
+    },
   };
 </script>
 

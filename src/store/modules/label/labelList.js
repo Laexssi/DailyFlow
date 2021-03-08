@@ -25,8 +25,9 @@ export default {
         const querySnapshot = await firestore.collection('label').where('userId', '==', `${uid}`).get();
         querySnapshot.forEach((doc) => list.push(doc.data()));
         commit('setList', list);
+        return list;
       } catch (e) {
-        console.log('error', e);
+        return Promise.reject(e);
       }
     },
   },

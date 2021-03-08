@@ -47,7 +47,6 @@ export default {
           return userWithAdditionalInfo;
         })
         .then(async (user) => {
-          console.log('user in login', user);
           if (user.isNewUser) {
             await dispatch('user/createUser', user, { root: true });
           }

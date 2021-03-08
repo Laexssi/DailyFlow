@@ -6,8 +6,7 @@ const activitySchema = {
   cooldown_expiration_date: 0,
   emoji: null,
   labels: [],
-  last_complete_day: null,
-  complete_dates: null,
+  complete_dates: [],
   name: null,
   id: null,
   userId: null,
@@ -50,10 +49,10 @@ export default {
       if (!uid) throw new Error('user not found');
       if (!newActivity.name) throw new Error('name not found');
       try {
-        const activityRef = await firestore.collection('activity').add({ ...newActivity, userId: uid });
-        const { id: activityId } = activityRef;
+        const activityRef = firestore.collection('activity');
+        const { id: activityId } = await activityRef.add({ ...newActivity, userId: uid });
         await firestore.collection('activity').doc(activityId).update({ id: activityId });
-        commit('setActivity', null);
+        commit('setActivity', { ...activitySchema });
         return activityId;
       } catch (err) {
         return Promise.reject(err);

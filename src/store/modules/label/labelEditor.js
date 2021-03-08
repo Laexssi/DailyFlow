@@ -25,8 +25,8 @@ export default {
       if (!uid) throw new Error('user not found');
       if (!newLabel.name) throw new Error('name not found');
       try {
-        const labelRef = await firestore.collection('label').add({ ...newLabel, userId: uid });
-        const { id } = labelRef;
+        const labelRef = firestore.collection('label');
+        const { id } = await labelRef.add({ ...newLabel, userId: uid });
         await firestore.collection('label').doc(id).update({ id });
         return id;
       } catch (err) {
@@ -39,7 +39,6 @@ export default {
       if (!uid) throw new Error('user not found');
       if (!editedLabel.name) throw new Error('name not found');
       try {
-        console.log(editedLabel);
         await firestore.collection('label').doc(editedLabel.id).set(editedLabel);
         return editedLabel;
       } catch (err) {
