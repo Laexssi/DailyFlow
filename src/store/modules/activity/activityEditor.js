@@ -58,5 +58,21 @@ export default {
         return Promise.reject(err);
       }
     },
+    async editActivity({ getters, commit }, payload) {
+      const activity = getters.getActivity || payload;
+      const {
+              name, cooldown, labels, emoji,
+      } = activity;
+      try {
+        const activityRef = firestore.collection('activity').doc(activity.id);
+        await activityRef.update({
+          name, cooldown, labels, emoji,
+        });
+        commit('setActivity', { ...activitySchema });
+        return activity.id;
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    },
   },
 };

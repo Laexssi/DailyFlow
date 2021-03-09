@@ -17,7 +17,6 @@ export default {
   },
   actions: {
     async deleteLabel({ getters, dispatch }, payload) {
-      console.log(payload);
       const id = getters.getLabel?.id || payload.id;
       await firestore.collection('label').doc(id).delete();
       await dispatch('labelList/updateList', null, { root: true });

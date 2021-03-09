@@ -10,7 +10,7 @@
           small
           v-bind="attrs"
           v-on="on">
-            {{ selectEmoji }}
+            {{ selectedEmoji }}
           </v-btn>
         </template>
 
@@ -118,7 +118,7 @@
         rounded
         width="100%"
         @click="createActivityHandler">
-          Create
+          {{ editMode ? 'Edit' : 'Create' }}
         </v-btn>
       </div>
     </div>
@@ -150,17 +150,27 @@
       const listsData = [this.updateActivityList(), this.updateLabelList()];
       Promise.all(listsData)
         .then(() => {
+          if (this.$route.params.id) {
+            this.editMode = true;
+            const editingActivity = this.activityList.find(({ id }) => id === this.$route.params.id);
+            editingActivity.labels = editingActivity.labels.map((label) => label.id);
+            this.setActivity(editingActivity);
+            this.cooldownTime = this.activity.cooldown / 3600 / 1000;
+          }
           this.loading = false;
         })
         .catch((e) => console.warn(e));
-      this.randomizeEmoji();
       this.setShowRouterBackButton(true);
+    },
+    mounted() {
+      this.randomizeEmoji();
     },
     destroyed() {
       this.setShowRouterBackButton(false);
     },
     methods: {
       ...mapMutations({
+        setActivity: 'activityEditor/setActivity',
         setActivityKey: 'activityEditor/setActivityKey',
         removeLabel: 'activityEditor/removeLabel',
         setShowRouterBackButton: 'appState/setShowRouterBackButton',
@@ -169,14 +179,23 @@
         updateActivityList: 'activityList/updateList',
         updateLabelList: 'labelList/updateList',
         createActivity: 'activityEditor/createActivity',
+        editActivity: 'activityEditor/editActivity',
       }),
       async createActivityHandler() {
+        if (this.editMode) {
+          await this.editActivity();
+          await this.$router.push({ name: 'library' });
+          return;
+        }
         await this.createActivity();
         await this.$router.push({ name: 'library' });
       },
       randomizeEmoji() {
         const randomIndex = Math.floor(Math.random() * 700);
-        this.setActivityKey({ key: 'emoji', value: this.emojiList[randomIndex].data });
+        this.setActivityKey({ key: 'emoji', value: this.emojiList[randomIndex] });
+      },
+      selectEmoji(emoji) {
+        this.selectedEmoji = emoji.data;
       },
     },
     computed: {
@@ -189,7 +208,7 @@
       emojiList() {
         return emojisDefault.filter(({ category }) => this.emojiCategories.has(category));
       },
-      selectEmoji: {
+      selectedEmoji: {
         get() {
           return this.activity?.emoji;
         },
@@ -214,6 +233,7 @@
     },
     data: () => ({
       loading: true,
+      editMode: false,
       emojiCategories: new Set(['Activity', 'Peoples', 'Foods', 'Nature', 'Places']),
       cooldownTime: 0,
       showLabelPopup: false,

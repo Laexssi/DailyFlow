@@ -25,6 +25,7 @@ export default {
         const timestamp = Date.now();
         const { cooldown } = activity;
         const cooldownExpirationDate = timestamp + cooldown;
+        console.log('timestamp', timestamp, 'cooldown', cooldown, 'exp', cooldownExpirationDate);
 
         await activityRef.update({
           complete_dates: firebase.firestore.FieldValue.arrayUnion(timestamp),
@@ -50,6 +51,12 @@ export default {
       } catch (e) {
         return Promise.reject(e);
       }
+    },
+    async deleteActivity({ getters, dispatch }, payload) {
+      const id = getters.getActivity?.id || payload.id;
+      await firestore.collection('activity').doc(id).delete();
+      await dispatch('activityList/updateList', null, { root: true });
+      return id;
     },
   },
 };
