@@ -54,7 +54,7 @@
     fab
     elevation="0"
     color="#333333"
-    @click="addActivityHandler">
+    @click="addNewEntity">
       <v-icon color="white">
         mdi-plus
       </v-icon>
@@ -70,8 +70,13 @@
       switchRouteHandler(route) {
         this.$router.push({ name: route });
       },
-      addActivityHandler() {
-        this.$router.push({ name: 'activity-editor-new' });
+      addNewEntity() {
+        const routeTo = {
+          library: 'activity-editor-new',
+          ff: 'activity-editor-new',
+        }[this.$route.name];
+
+        this.$router.push({ name: routeTo });
       },
     },
     computed: {
@@ -83,7 +88,7 @@
         return [{
                   icon: 'mdi-star',
                   route: 'library',
-                  isActive: this.$route.name === 'library',
+                  isActive: this.$route.name.includes('library'),
                 },
                 {
                   icon: 'mdi-list-status',

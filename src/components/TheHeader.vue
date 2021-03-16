@@ -59,6 +59,8 @@
         return {
           'activity-editor-new': 'New activity',
           'activity-editor-edit': 'Edit activity',
+          library: 'Activities',
+          'library-list': 'Activities',
         }[this.$route.name] || capitalizeFirstLetter(this.$route.name);
       },
     },

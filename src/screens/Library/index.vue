@@ -1,69 +1,52 @@
 <template>
-  <div class="main-screen__content">
-    <div
-    v-if="!loading"
-    class="library__list">
-      <ActivityCard
-      v-for="item in activityList"
-      :key="item.id"
-      :activityData="item"/>
+  <div class="library-wrapper">
+    <v-tabs
+    v-model="tab"
+    backgroundColor="transparent"
+    color="basil"
+    grow>
+      <v-tab
+      v-for="item in tabItems"
+      :key="item.route"
+      :to="{ name: item.routeName }">
+        {{ item.text }}
+      </v-tab>
+    </v-tabs>
+
+    <div class="main-screen__content">
+      <router-view/>
     </div>
   </div>
 </template>
 
 <script>
-  import ActivityCard from 'components/ActivityCard';
-  import { mapActions, mapGetters } from 'vuex';
 
   export default {
     name: 'Library',
-    components: { ActivityCard },
-    created() {
-      const listsData = [this.updateActivityList(), this.updateLabelList()];
-      Promise.all(listsData)
-        .then(() => {
-          this.loading = false;
-        })
-        .catch((e) => console.warn(e));
-    },
-    methods: {
-      ...mapActions({
-        updateActivityList: 'activityList/updateList',
-        updateLabelList: 'labelList/updateList',
-      }),
-    },
     computed: {
-      ...mapGetters({
-        activityList: 'activityList/getList',
-        labelList: 'labelList/getList',
-      }),
+      tabItems() {
+        return [
+          {
+            text: 'Library',
+            routeName: 'library',
+          },
+          {
+            text: 'List',
+            routeName: 'library-list',
+          },
+        ];
+      },
     },
     data: () => ({
-      loading: true,
+      tab: 'library',
     }),
   };
 </script>
 
 <style lang="scss">
-  .library__list {
+  .library-wrapper {
     display: flex;
-    flex-flow: row wrap;
-    overflow-y: auto;
-
-    padding-bottom: 76px;
-
-    @include between-children() {
-      margin-right: 16px;
-    }
-
-    @include breakpoint-width(0, 768px) {
-      flex-flow: column nowrap;
-      align-items: center;
-
-      @include between-children() {
-        margin-right: 0;
-        margin-bottom: 16px;
-      }
-    }
+    flex-direction: column;
   }
+
 </style>

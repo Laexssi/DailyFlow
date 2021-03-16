@@ -50,7 +50,7 @@ export default {
       if (!newActivity.name) throw new Error('name not found');
       try {
         const activityRef = firestore.collection('activity');
-        const { id: activityId } = await activityRef.add({ ...newActivity, userId: uid });
+        const { id: activityId } = await activityRef.add({ ...newActivity, userId: uid, creation_date: Date.now() });
         await firestore.collection('activity').doc(activityId).update({ id: activityId });
         commit('setActivity', { ...activitySchema });
         return activityId;

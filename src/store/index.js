@@ -15,6 +15,9 @@ import label from './modules/label';
 import labelEditor from './modules/label/labelEditor';
 import labelList from './modules/label/labelList';
 
+import group from './modules/group';
+import groupList from './modules/group/groupList';
+
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -38,6 +41,9 @@ const store = new Vuex.Store({
     label,
     labelEditor,
     labelList,
+
+    group,
+    groupList,
   },
 });
 

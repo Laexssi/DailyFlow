@@ -29,80 +29,11 @@
           </v-btn>
         </template>
 
-        <div
-        class="activity-card__menu-content">
-          <template v-if="!deleteConfirmation">
-            <v-btn
-            dark
-            width="100%"
-            color="#333333"
-            @click="editHandler">
-              Edit
-
-              <v-icon>
-                mdi-pencil
-              </v-icon>
-            </v-btn>
-
-            <v-btn
-            dark
-            width="100%"
-            color="#333333"
-            @click.stop="deleteConfirmation = true">
-              Delete
-
-              <v-icon>
-                mdi-delete
-              </v-icon>
-            </v-btn>
-          </template>
-
-          <template v-else>
-            <div class="activity-card__menu-content__header">
-              <v-btn
-              xSmall
-              dark
-              width="100%"
-              color="#333333"
-              @click="deleteConfirmation = false">
-                <v-icon>
-                  mdi-arrow-left
-                </v-icon>
-
-                <span>
-                  Back to menu
-                </span>
-              </v-btn>
-            </div>
-
-            <div class="activity-card__menu-content__desc">
-              Are you sure you want to delete this activity? This action can not be undone
-            </div>
-
-            <div
-            class="activity-card__menu-content__controls">
-              <v-btn
-              medium
-              @click="deleteHandler">
-                Delete
-
-                <v-icon>
-                  mdi-delete
-                </v-icon>
-              </v-btn>
-
-              <v-btn
-              medium
-              @click="deleteConfirmation = false">
-                Cancel
-
-                <v-icon>
-                  mdi-close
-                </v-icon>
-              </v-btn>
-            </div>
-          </template>
-        </div>
+        <ActivityCardMenu
+        :activity="activityData"
+        @delete="deleteHandler"
+        @edit="editHandler"
+        @cancel="cancelLastCompleteHandler"/>
       </v-menu>
     </div>
 
@@ -126,19 +57,16 @@
       <v-btn
       class="mt-6 mb-6"
       outlined
-      @click="onCompleteHandler(activityData)"
-      :disabled="completeButtonDisabled">
-        <template v-if="!completeButtonDisabled">
-          <v-icon left>
-            mdi-check
-          </v-icon>
+      @click="onCompleteHandler"
+      :loading="buttonLoading">
+        <v-icon left>
+          mdi-check
+        </v-icon>
 
-          Complete Now
-        </template>
-
-        <template v-else>
-          {{ timeToRefresh }}
-        </template>
+        Complete Now
+        <!--        <template v-else>-->
+        <!--          {{ timeToRefresh }}-->
+        <!--        </template>-->
       </v-btn>
 
       <div class="activity-card__complete-section">
@@ -154,19 +82,6 @@
           <div>Completed last on</div>
 
           <div>{{ lastCompleteDate }}</div>
-
-          <v-btn
-          v-if="showCancelLastComplete"
-          text
-          xSmall
-          class="activity-card__complete-button"
-          @click="cancelLastCompleteHandler(activityData)">
-            <v-icon>
-              mdi-close
-            </v-icon>
-
-            <span class="activity-card__complete-button__desc">Cancel last complete</span>
-          </v-btn>
         </div>
       </div>
     </div>
@@ -176,22 +91,24 @@
 <script>
   import { mapActions, mapMutations } from 'vuex';
   import dayjs from 'dayjs';
+  import ActivityCardMenu from './ActivityCardMenu';
 
   export default {
     name: 'ActivityCard',
+    components: { ActivityCardMenu },
     props: {
       activityData: {
         type: Object,
         default: () => {},
       },
     },
-    created() {
-      const INTERVAL = 5 * (10 ** 3);
-      this.updateNowTimer = setInterval(() => { this.updateNow(); }, INTERVAL);
-    },
-    beforeDestroy() {
-      clearInterval(this.updateNowTimer);
-    },
+    // created() {
+    //   const INTERVAL = 5 * (10 ** 3);
+    //   this.updateNowTimer = setInterval(() => { this.updateNow(); }, INTERVAL);
+    // },
+    // beforeDestroy() {
+    //   clearInterval(this.updateNowTimer);
+    // },
     methods: {
       ...mapMutations({ setActivity: 'activity/setActivity' }),
       ...mapActions({
@@ -200,17 +117,19 @@
         cancelLastComplete: 'activity/cancelLastComplete',
         deleteActivity: 'activity/deleteActivity',
       }),
-      async onCompleteHandler(activity) {
-        await this.completeActivity(activity);
-        await this.updateActivityById(activity);
+      async onCompleteHandler() {
+        this.buttonLoading = true;
+        await this.completeActivity(this.activityData);
+        await this.updateActivityById(this.activityData);
+        setTimeout(() => { this.buttonLoading = false; }, 900);
       },
-      async cancelLastCompleteHandler(activity) {
-        await this.cancelLastComplete(activity);
-        await this.updateActivityById(activity);
+      async cancelLastCompleteHandler() {
+        await this.cancelLastComplete(this.activityData);
+        await this.updateActivityById(this.activityData);
       },
-      updateNow() {
-        this.now = Date.now();
-      },
+      // updateNow() {
+      //   this.now = Date.now();
+      // },
       editHandler() {
         this.$router.push({ name: 'activity-editor-edit', params: { id: this.activityData.id } });
       },
@@ -223,31 +142,26 @@
         if (!this.activityData.complete_dates[0]) return null;
         return dayjs(this.activityData.complete_dates[0]).format('DD, MMMM');
       },
-      completeButtonDisabled() {
-        if (!this.activityData.cooldown) return false;
-        return this.now < this.activityData.cooldown_expiration_date;
-      },
-      timeToRefresh() {
-        const timeMs = this.activityData.cooldown_expiration_date - this.now;
-        const mins = Math.floor(timeMs / 1000 / 60);
-        const hours = Math.floor(mins / 60);
-        return `Cooldown ${hours}H ${Math.floor(mins - (hours * 60))}M`;
-      },
+      // completeButtonDisabled() {
+      //   if (!this.activityData.cooldown) return false;
+      //   return this.now < this.activityData.cooldown_expiration_date;
+      // },
+      // timeToRefresh() {
+      //   const timeMs = this.activityData.cooldown_expiration_date - this.now;
+      //   const mins = Math.floor(timeMs / 1000 / 60);
+      //   const hours = Math.floor(mins / 60);
+      //   return `Cooldown ${hours}H ${Math.floor(mins - (hours * 60))}M`;
+      // },
       showCancelLastComplete() {
         return this.activityData.complete_count > 0;
       },
     },
     data: () => ({
-      now: Date.now(),
-      updateNowTimer: null,
-      deleteConfirmation: false,
+      // now: Date.now(),
+      // updateNowTimer: null,
       menuOpen: false,
+      buttonLoading: false,
     }),
-    watch: {
-      menuOpen(val) {
-        if (!val) setTimeout(() => { this.deleteConfirmation = false; }, 300);
-      },
-    },
   };
 </script>
 
@@ -342,36 +256,7 @@
     }
   }
 
-  .activity-card__menu-content {
-    display: flex;
-    flex-direction: column;
-    padding: 8px;
-    background-color: #333333;
-    color: white;
-
-    .v-menu__content {
-      box-shadow: none;
-    }
-
-    .v-btn__content {
-      justify-content: space-between;
-    }
-  }
-
   .activity-card__anchor-button {
     position: relative;
-  }
-
-  .activity-card__menu-content__desc {
-    text-transform: none;
-    word-break: break-word;
-    white-space: normal;
-    margin: 12px 0;
-  }
-
-  .activity-card__menu-content__controls {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
   }
 </style>

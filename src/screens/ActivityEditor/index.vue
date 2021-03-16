@@ -192,10 +192,10 @@
       },
       randomizeEmoji() {
         const randomIndex = Math.floor(Math.random() * 700);
-        this.setActivityKey({ key: 'emoji', value: this.emojiList[randomIndex] });
+        this.setActivityKey({ key: 'emoji', value: this.emojiList[randomIndex].data });
       },
       selectEmoji(emoji) {
-        this.selectedEmoji = emoji.data;
+        this.selectedEmoji = typeof emoji === 'string' ? emoji : emoji.data;
       },
     },
     computed: {
