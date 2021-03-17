@@ -27,48 +27,48 @@
       class="activity-editor__input"
       label="Name"/>
 
-      <div class="activity-editor__cooldown-container mt-1">
-        <div class="activity-editor__cooldown-row">
-          <div class="activity-editor__cooldown-heading mb-1 text-center">
-            <span>Cooldown period</span>
-          </div>
+      <!--      <div class="activity-editor__cooldown-container mt-1">-->
+      <!--        <div class="activity-editor__cooldown-row">-->
+      <!--          <div class="activity-editor__cooldown-heading mb-1 text-center">-->
+      <!--            <span>Cooldown period</span>-->
+      <!--          </div>-->
 
-          <div class="activity-editor__cooldown-controls">
-            <v-btn
-            fab
-            xSmall
-            elevation="0"
-            color="#BDBDBD"
-            :disabled="cooldownTime === 0"
-            @click="cooldownTime--">
-              <v-icon>
-                mdi-chevron-left
-              </v-icon>
-            </v-btn>
+      <!--          <div class="activity-editor__cooldown-controls">-->
+      <!--            <v-btn-->
+      <!--            fab-->
+      <!--            xSmall-->
+      <!--            elevation="0"-->
+      <!--            color="#BDBDBD"-->
+      <!--            :disabled="cooldownTime === 0"-->
+      <!--            @click="cooldownTime&#45;&#45;">-->
+      <!--              <v-icon>-->
+      <!--                mdi-chevron-left-->
+      <!--              </v-icon>-->
+      <!--            </v-btn>-->
 
-            <div class="activity-editor__cooldown-value">
-              <span> {{ cooldownTime }} </span>
-            </div>
+      <!--            <div class="activity-editor__cooldown-value">-->
+      <!--              <span> {{ cooldownTime }} </span>-->
+      <!--            </div>-->
 
-            <v-btn
-            fab
-            xSmall
-            elevation="0"
-            color="#BDBDBD"
-            @click="cooldownTime++">
-              <v-icon>
-                mdi-chevron-right
-              </v-icon>
-            </v-btn>
+      <!--            <v-btn-->
+      <!--            fab-->
+      <!--            xSmall-->
+      <!--            elevation="0"-->
+      <!--            color="#BDBDBD"-->
+      <!--            @click="cooldownTime++">-->
+      <!--              <v-icon>-->
+      <!--                mdi-chevron-right-->
+      <!--              </v-icon>-->
+      <!--            </v-btn>-->
 
-            <div class="ml-2">
-              <span>hour</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!--            <div class="ml-2">-->
+      <!--              <span>hour</span>-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </div>-->
 
-      <div class="activity-editor__label-control mt-6">
+      <div class="activity-editor__label-control">
         <v-dialog
         v-model="showLabelPopup"
         maxWidth="768">

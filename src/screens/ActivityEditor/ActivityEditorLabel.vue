@@ -189,7 +189,7 @@
 
         const newLabel = find(this.allLabels, ({ id }) => id === newLabelId);
 
-        this.addLabelToCurrentActivity(newLabel);
+        this.addLabelToCurrentActivity(newLabel.id);
         this.selectedLabels.push(newLabel.id);
 
         this.clearData();
@@ -219,6 +219,7 @@
       setCreateModeHandler() {
         this.createMode = false;
         this.setCurrentLabel(null);
+        this.clearData();
       },
       setRandomLabelColor() {
         const randomIndex = Math.floor(Math.random() * this.colorList.length);

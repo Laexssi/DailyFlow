@@ -27,6 +27,7 @@
       </v-btn>
 
       <v-btn
+      v-if="activity.complete_count > 0"
       dark
       width="100%"
       color="#333333"

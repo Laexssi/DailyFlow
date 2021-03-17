@@ -120,8 +120,11 @@
       async onCompleteHandler() {
         this.buttonLoading = true;
         await this.completeActivity(this.activityData);
-        await this.updateActivityById(this.activityData);
-        setTimeout(() => { this.buttonLoading = false; }, 900);
+        const delayPromise = new Promise((resolve) => {
+          setTimeout(() => resolve(), 900);
+        });
+        Promise.allSettled([this.updateActivityById(this.activityData), delayPromise])
+          .then(() => { this.buttonLoading = false; });
       },
       async cancelLastCompleteHandler() {
         await this.cancelLastComplete(this.activityData);
@@ -139,8 +142,8 @@
     },
     computed: {
       lastCompleteDate() {
-        if (!this.activityData.complete_dates[0]) return null;
-        return dayjs(this.activityData.complete_dates[0]).format('DD, MMMM');
+        if (!this.activityData.complete_dates.length) return null;
+        return dayjs(this.activityData.complete_dates[this.activityData.complete_dates.length - 1]).format('DD, MMMM, HH:mm');
       },
       // completeButtonDisabled() {
       //   if (!this.activityData.cooldown) return false;
@@ -152,9 +155,6 @@
       //   const hours = Math.floor(mins / 60);
       //   return `Cooldown ${hours}H ${Math.floor(mins - (hours * 60))}M`;
       // },
-      showCancelLastComplete() {
-        return this.activityData.complete_count > 0;
-      },
     },
     data: () => ({
       // now: Date.now(),
