@@ -7,6 +7,7 @@ module.exports = {
         src: path.resolve(__dirname, 'src'),
         screens: path.resolve(__dirname, 'src/screens'),
         store: path.resolve(__dirname, 'src/store'),
+        api: path.resolve(__dirname, 'src/api'),
         styles: path.resolve(__dirname, 'src/styles'),
         assets: path.resolve(__dirname, 'src/assets'),
         components: path.resolve(__dirname, 'src/components'),

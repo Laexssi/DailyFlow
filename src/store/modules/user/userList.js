@@ -1,4 +1,4 @@
-import { firestore } from 'firebaseDir';
+import { fetchUsers } from 'api';
 
 export default {
   namespaced: true,
@@ -19,10 +19,8 @@ export default {
     },
   },
   actions: {
-    async updateList({ commit }, payload) {
-      console.log(payload);
-      const data = await firestore.collection('users').get();
-      commit('addToList', data);
+    async updateList({ commit }) {
+      commit('addToList', await fetchUsers());
     },
   },
 };

@@ -1,4 +1,4 @@
-import { firestore } from 'firebaseDir';
+import { fetchActivities, fetchActivityById } from 'api';
 // TOOO add pagination
 
 export default {
@@ -26,13 +26,11 @@ export default {
     },
   },
   actions: {
-    async updateList({ commit, rootGetters }) {
-      const list = [];
-      const { uid } = rootGetters['auth/getUser'];
+    async updateList({ commit, rootState }) {
+      const { uid } = rootState.auth.user;
       if (!uid) throw new Error('user not found');
       try {
-        const res = await firestore.collection('activity').where('userId', '==', `${uid}`).get();
-        res.forEach((doc) => list.push(doc.data()));
+        const list = await fetchActivities(uid);
         commit('setList', list);
         return list;
       } catch (e) {
@@ -42,8 +40,7 @@ export default {
     async updateActivityById({ commit }, payload) {
         const { id } = payload;
         try {
-          const activityRef = await firestore.collection('activity').doc(`${id}`).get();
-          const activityData = await activityRef.data();
+          const activityData = await fetchActivityById(id);
           commit('setListItem', { id, activityData });
           return activityData;
         } catch (e) {

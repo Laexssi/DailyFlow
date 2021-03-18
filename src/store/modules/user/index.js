@@ -1,4 +1,4 @@
-import { firestore } from 'firebaseDir';
+import { createUserRequest } from 'api';
 
 export default {
   namespaced: true,
@@ -17,16 +17,11 @@ export default {
   },
   actions: {
     async createUser(context, payload) {
-      console.log('payload', payload);
-      const { uid: id, metadata: { creationTime, lastSignInTime } } = payload;
-      firestore.collection('users').doc(id).set({
-        displayName: payload.displayName,
-        email: payload.email,
-        uid: payload.uid,
-        photoURL: payload.photoURL,
-        lastSignInTime,
-        creationTime,
-      });
+     try {
+      return await createUserRequest(payload);
+     } catch (e) {
+      return Promise.reject(e);
+     }
     },
   },
 };

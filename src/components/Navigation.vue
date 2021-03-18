@@ -73,7 +73,6 @@
       addNewEntity() {
         const routeTo = {
           library: 'activity-editor-new',
-          ff: 'activity-editor-new',
         }[this.$route.name];
 
         this.$router.push({ name: routeTo });
@@ -88,7 +87,7 @@
         return [{
                   icon: 'mdi-star',
                   route: 'library',
-                  isActive: this.$route.name.includes('library'),
+                  isActive: this.$route.name === 'library',
                 },
                 {
                   icon: 'mdi-list-status',

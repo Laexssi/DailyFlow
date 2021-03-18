@@ -1,4 +1,4 @@
-import { firestore } from 'firebaseDir';
+import { createActivityRequest, editActivityRequest } from 'api';
 
 const activitySchema = {
   complete_count: 0,
@@ -43,15 +43,13 @@ export default {
     },
   },
   actions: {
-    async createActivity({ getters, rootGetters, commit }, payload) {
+    async createActivity({ getters, rootState, commit }, payload) {
       const newActivity = getters.getActivity || payload;
-      const { uid } = rootGetters['auth/getUser'];
+      const { uid } = rootState.auth.user;
       if (!uid) throw new Error('user not found');
       if (!newActivity.name) throw new Error('name not found');
       try {
-        const activityRef = firestore.collection('activity');
-        const { id: activityId } = await activityRef.add({ ...newActivity, userId: uid, creation_date: Date.now() });
-        await firestore.collection('activity').doc(activityId).update({ id: activityId });
+        const activityId = await createActivityRequest(newActivity, uid);
         commit('setActivity', { ...activitySchema });
         return activityId;
       } catch (err) {
@@ -60,16 +58,10 @@ export default {
     },
     async editActivity({ getters, commit }, payload) {
       const activity = getters.getActivity || payload;
-      const {
-              name, cooldown, labels, emoji,
-      } = activity;
       try {
-        const activityRef = firestore.collection('activity').doc(activity.id);
-        await activityRef.update({
-          name, cooldown, labels, emoji,
-        });
+        const activityId = await editActivityRequest(activity);
         commit('setActivity', { ...activitySchema });
-        return activity.id;
+        return activityId;
       } catch (err) {
         return Promise.reject(err);
       }

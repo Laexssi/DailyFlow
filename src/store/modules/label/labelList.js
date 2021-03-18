@@ -1,4 +1,4 @@
-import { firestore } from 'firebaseDir';
+import { fetchLabels } from 'api';
 // TOOO add pagination
 
 export default {
@@ -17,13 +17,11 @@ export default {
     },
   },
   actions: {
-    async updateList({ commit, rootGetters }) {
-      const list = [];
-      const { uid } = rootGetters['auth/getUser'];
+    async updateList({ commit, rootState }) {
+      const { uid } = rootState.auth.user;
       if (!uid) throw new Error('user not found');
       try {
-        const querySnapshot = await firestore.collection('label').where('userId', '==', `${uid}`).get();
-        querySnapshot.forEach((doc) => list.push(doc.data()));
+        const list = await fetchLabels(uid);
         commit('setList', list);
         return list;
       } catch (e) {

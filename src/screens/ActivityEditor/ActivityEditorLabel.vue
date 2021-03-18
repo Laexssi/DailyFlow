@@ -149,7 +149,6 @@
 
 <script>
   import debounce from 'lodash/debounce';
-  import find from 'lodash/find';
   import { mapGetters, mapActions, mapMutations } from 'vuex';
 
   export default {
@@ -187,7 +186,7 @@
         const newLabelId = await this.createLabel({ color: this.newLabelColor, name: this.newLabelName });
         await this.updateLabelList();
 
-        const newLabel = find(this.allLabels, ({ id }) => id === newLabelId);
+        const newLabel = this.allLabels.find(({ id }) => id === newLabelId);
 
         this.addLabelToCurrentActivity(newLabel.id);
         this.selectedLabels.push(newLabel.id);
@@ -215,10 +214,10 @@
         this.newLabelColor = null;
         this.newLabelName = null;
         this.createMode = false;
+        this.setCurrentLabel(null);
       },
       setCreateModeHandler() {
         this.createMode = false;
-        this.setCurrentLabel(null);
         this.clearData();
       },
       setRandomLabelColor() {

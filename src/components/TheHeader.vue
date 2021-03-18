@@ -42,7 +42,7 @@
 </template>
 
 <script>
-  import { mapActions, mapGetters } from 'vuex';
+  import { mapActions, mapState } from 'vuex';
   import capitalizeFirstLetter from 'helpers/capitalizeFirstLetter';
 
   export default {
@@ -59,16 +59,12 @@
         return {
           'activity-editor-new': 'New activity',
           'activity-editor-edit': 'Edit activity',
-          library: 'Activities',
-          'library-list': 'Activities',
         }[this.$route.name] || capitalizeFirstLetter(this.$route.name);
       },
     },
     computed: {
-      ...mapGetters({
-        user: 'auth/getUser',
-        showRouterBackButton: 'appState/getShowRouterBackButton',
-      }),
+      ...mapState('appState', ['showRouterBackButton']),
+      ...mapState('auth', ['user']),
       showHeader() {
         return this.$route.name !== 'login';
       },

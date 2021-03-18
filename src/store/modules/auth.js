@@ -8,9 +8,6 @@ export default {
     isInited: false,
   },
   getters: {
-    getUser(state) {
-      return state.user;
-    },
     getIsLogged(state) {
       return state.isLogged;
     },

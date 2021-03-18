@@ -1,4 +1,4 @@
-import { firestore } from 'firebaseDir';
+import { createLabelRequest, editLabelRequest } from 'api';
 
 export default {
   namespaced: true,
@@ -19,16 +19,15 @@ export default {
     },
   },
   actions: {
-    async createLabel({ getters, rootGetters }, payload) {
+    async createLabel({ getters, commit, rootState }, payload) {
       const newLabel = getters.getLabel || payload;
-      const { uid } = rootGetters['auth/getUser'];
+      const { uid } = rootState.auth.user;
       if (!uid) throw new Error('user not found');
       if (!newLabel.name) throw new Error('name not found');
       try {
-        const labelRef = firestore.collection('label');
-        const { id } = await labelRef.add({ ...newLabel, userId: uid });
-        await firestore.collection('label').doc(id).update({ id });
-        return id;
+        const labelId = await createLabelRequest(newLabel, uid);
+        commit('setLabel', null);
+        return labelId;
       } catch (err) {
         return Promise.reject(err);
       }
@@ -39,8 +38,7 @@ export default {
       if (!uid) throw new Error('user not found');
       if (!editedLabel.name) throw new Error('name not found');
       try {
-        await firestore.collection('label').doc(editedLabel.id).set(editedLabel);
-        return editedLabel;
+        return await editLabelRequest(editedLabel);
       } catch (err) {
         return Promise.reject(err);
       }

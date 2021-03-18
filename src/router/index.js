@@ -4,8 +4,6 @@ import VueRouter from 'vue-router';
 const Login = () => import(/* webpackChunkName: "login" */'screens/Login');
 const Plan = () => import(/* webpackChunkName: "plan" */'screens/Plan');
 const Library = () => import(/* webpackChunkName: "library" */'screens/Library');
-const LibraryActivities = ()/* webpackChunkName: "library-activities" */ => import('screens/Library/LibraryActivities');
-const LibraryList = ()/* webpackChunkName: "library-groups" */ => import('screens/Library/LibraryList');
 const Analytics = ()/* webpackChunkName: "analytics" */ => import('screens/Analytics');
 const ActivityEditor = ()/* webpackChunkName: "activity" */ => import('screens/ActivityEditor');
 
@@ -28,22 +26,9 @@ const routes = [
   },
   {
     path: '/library',
+    name: 'library',
     component: Library,
     meta: { requiresAuth: true },
-    children: [
-      {
-        path: '',
-        name: 'library',
-        component: LibraryActivities,
-        meta: { requiresAuth: true },
-      },
-      {
-        path: '/library/list',
-        name: 'library-list',
-        component: LibraryList,
-        meta: { requiresAuth: true },
-      },
-    ],
   },
   {
     path: '/analytics',

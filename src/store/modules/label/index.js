@@ -1,4 +1,4 @@
-import { firestore } from 'firebaseDir';
+import { deleteLabelRequest } from 'api';
 
 export default {
   namespaced: true,
@@ -16,11 +16,9 @@ export default {
     },
   },
   actions: {
-    async deleteLabel({ getters, dispatch }, payload) {
+    async deleteLabel({ getters }, payload) {
       const id = getters.getLabel?.id || payload.id;
-      await firestore.collection('label').doc(id).delete();
-      await dispatch('labelList/updateList', null, { root: true });
-      return id;
+      return deleteLabelRequest(id);
     },
   },
 };
