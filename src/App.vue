@@ -33,7 +33,6 @@
     },
     async created() {
       auth.onAuthStateChanged((user) => {
-        console.log('on uth state change', user);
         this.setIsLogged(false);
         this.setIsInited(true);
         if (this.$router.currentRoute.name === 'login') {
@@ -42,7 +41,6 @@
         }
 
         if (!user) {
-          console.log('no user');
           this.loading = false;
           this.$router.push({ name: 'login' });
           return;

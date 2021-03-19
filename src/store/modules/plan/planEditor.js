@@ -1,4 +1,4 @@
-import cloneDeep from 'lodash/cloneDeeo';
+import cloneDeep from 'lodash/cloneDeep';
 
 const planSchema = {
   cooldown: 0,

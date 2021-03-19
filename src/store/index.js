@@ -17,6 +17,7 @@ import labelList from './modules/label/labelList';
 
 import plan from './modules/plan';
 import planList from './modules/plan/planList';
+import planEditor from './modules/plan/planEditor';
 
 Vue.use(Vuex);
 
@@ -43,6 +44,7 @@ const store = new Vuex.Store({
     labelList,
 
     plan,
+    planEditor,
     planList,
   },
 });

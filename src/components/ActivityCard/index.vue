@@ -180,6 +180,10 @@
     @include between-children() {
       margin-bottom: 8px;
     }
+
+    @include breakpoint-width(0, 768px) {
+      width: 100%;
+    }
   }
 
   .activity-card__header {

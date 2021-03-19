@@ -2,16 +2,17 @@
   <div class="main-screen__content main-screen__content--scroll">
     <div
     v-if="!loading"
-    class="library__list">
-      <ActivityCard
-      v-for="item in activityList"
+    class="plan__list">
+      <PlanCard
+      v-for="item in list"
       :key="item.id"
-      :activityData="item"/>
+      :plan="item"
+      listMode/>
     </div>
 
     <div
     v-else
-    class="library__loader-wrapper">
+    class="plan__loader-wrapper">
       <v-progress-circular
       indeterminate/>
     </div>
@@ -19,31 +20,23 @@
 </template>
 
 <script>
-  import ActivityCard from 'components/ActivityCard';
-  import { mapActions, mapGetters } from 'vuex';
+  import { mapActions, mapState } from 'vuex';
+  import PlanCard from 'components/PlanCard';
 
   export default {
-    name: 'ActivityList',
-    components: { ActivityCard },
+    name: 'PlanList',
+    components: { PlanCard },
     created() {
-      const listsData = [this.updateActivityList(), this.updateLabelList()];
-      Promise.all(listsData)
-        .then(() => {
-          this.loading = false;
-        })
-        .catch((e) => console.warn(e));
+      this.updatePlanList()
+        .finally(() => { this.loading = false; });
     },
     methods: {
       ...mapActions({
-        updateActivityList: 'activityList/updateList',
-        updateLabelList: 'labelList/updateList',
+        updatePlanList: 'planList/updateList',
       }),
     },
     computed: {
-      ...mapGetters({
-        activityList: 'activityList/getList',
-        labelList: 'labelList/getList',
-      }),
+      ...mapState('planList', ['list']),
     },
     data: () => ({
       loading: true,
@@ -52,7 +45,7 @@
 </script>
 
 <style lang="scss">
-  .library__loader-wrapper {
+  .plan__loader-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -63,9 +56,10 @@
     padding: 16px;
   }
 
-  .library__list {
+  .plan__list {
     display: flex;
     flex-flow: row wrap;
+    overflow-y: auto;
 
     padding-bottom: 76px;
 

@@ -1,5 +1,7 @@
 import { firestore, firebase } from 'firebaseDir';
 
+const QUERY_IN_LIMIT = 10;
+
 export async function createUserRequest(payload) {
   const { uid: id, metadata: { creationTime, lastSignInTime } } = payload;
   await firestore.collection('users').doc(id).set({
@@ -100,5 +102,38 @@ export async function fetchLabels(uid) {
   const list = [];
   const res = await firestore.collection('label').where('userId', '==', `${uid}`).get();
   res.forEach((doc) => list.push(doc.data()));
+  return list;
+}
+
+export async function fetchPlans(uid) {
+  const list = [];
+  const res = await firestore.collection('plan').where('userId', '==', `${uid}`).get();
+  res.forEach((doc) => list.push(doc.data()));
+  return list;
+}
+
+export async function fetchPlanById(id) {
+  const planRef = await firestore.collection('plan').doc(`${id}`).get();
+  return planRef.data();
+}
+
+export async function deletePlanRequest(id) {
+  await firestore.collection('plan').doc(id).delete();
+  return id;
+}
+
+export async function fetchActivitiesByIds(ids) {
+  const chunks = [];
+  for (let i = 0; i <= ids.length; i += QUERY_IN_LIMIT) {
+    const chunk = ids.slice(i, i + QUERY_IN_LIMIT);
+    chunks.push(chunk);
+  }
+  const list = [];
+  // eslint-disable-next-line no-restricted-syntax
+  for (const chunk of chunks) {
+    // eslint-disable-next-line no-await-in-loop
+    const res = await firestore.collection('activity').where('id', '==', `${chunk}`).get();
+    res.forEach((doc) => list.push(doc.data()));
+  }
   return list;
 }

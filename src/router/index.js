@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 
 const Login = () => import(/* webpackChunkName: "login" */'screens/Login');
+const PlanList = () => import(/* webpackChunkName: "plans" */'screens/PlanList');
 const Plan = () => import(/* webpackChunkName: "plan" */'screens/Plan');
 const Library = () => import(/* webpackChunkName: "library" */'screens/Library');
 const Analytics = ()/* webpackChunkName: "analytics" */ => import('screens/Analytics');
@@ -19,7 +20,13 @@ const routes = [
     component: Login,
   },
   {
-    path: '/plan',
+    path: '/plan/list',
+    name: 'plans',
+    component: PlanList,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/plan/:id',
     name: 'plan',
     component: Plan,
     meta: { requiresAuth: true },
@@ -50,7 +57,7 @@ const routes = [
   },
   {
     path: '*',
-    redirect: { name: 'plan' },
+    redirect: { name: 'plans' },
   },
 ];
 
@@ -63,12 +70,7 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
   const isAuthenticated = auth.currentUser;
   const isInited = store.getters['auth/getIsInited'];
-  console.log('isInited', isInited);
-
-  console.log('isAuth in route', auth.currentUser);
-  console.log('before route curr user', isAuthenticated);
   if (requiresAuth && !isAuthenticated && isInited) {
-    console.log('redirect');
     next('/login');
     return;
   }

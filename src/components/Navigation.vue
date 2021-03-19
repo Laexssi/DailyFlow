@@ -80,7 +80,7 @@
     },
     computed: {
       showNavigation() {
-        const noNavRoutes = ['login', 'activity-editor-edit', 'activity-editor-new'];
+        const noNavRoutes = ['login', 'activity-editor-edit', 'activity-editor-new', 'plan'];
         return !noNavRoutes.includes(this.$route.name);
       },
       navigationControls() {
@@ -91,8 +91,8 @@
                 },
                 {
                   icon: 'mdi-list-status',
-                  route: 'plan',
-                  isActive: this.$route.name === 'plan',
+                  route: 'plans',
+                  isActive: this.$route.name === 'plans',
                 },
                 {
                   icon: 'mdi-poll',

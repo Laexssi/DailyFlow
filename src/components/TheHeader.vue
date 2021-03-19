@@ -66,7 +66,8 @@
       ...mapState('appState', ['showRouterBackButton']),
       ...mapState('auth', ['user']),
       showHeader() {
-        return this.$route.name !== 'login';
+        const routesWithoutHeader = ['login', 'plan'];
+        return !routesWithoutHeader.includes(this.$route.name);
       },
     },
     data: () => ({
