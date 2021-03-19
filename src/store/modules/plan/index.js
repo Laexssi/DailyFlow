@@ -6,7 +6,7 @@ export default {
     plan: null,
   },
   getters: {
-    getPlan(state) {
+    getPlanCompleteCount(state) {
       return state.plan;
     },
   },
