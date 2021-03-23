@@ -137,3 +137,53 @@ export async function fetchActivitiesByIds(ids) {
   }
   return list;
 }
+
+export async function resetPlanActivitiesCounterRequest(plan) {
+  const planRef = firestore.collection('plan').doc(plan.id);
+  await planRef.update({
+    done_activities: 0,
+  });
+  return 0;
+}
+
+export async function completePlanActivityRequest(plan) {
+  const planRef = firestore.collection('plan').doc(plan.id);
+  const doneActivitiesCount = plan.done_activities + 1;
+  await planRef.update({
+    done_activities: doneActivitiesCount,
+  });
+  return doneActivitiesCount;
+}
+
+export async function cancelCompletePlanActivityRequest(plan) {
+  const planRef = firestore.collection('plan').doc(plan.id);
+  const doneActivitiesCount = plan.done_activities - 1;
+  await planRef.update({
+    done_activities: doneActivitiesCount,
+  });
+  return doneActivitiesCount;
+}
+
+export async function updatePlanRunningRequest(id, state) {
+  const planRef = firestore.collection('plan').doc(id);
+  await planRef.update({
+    running: state,
+  });
+  return state;
+}
+
+export async function completePlanRequest(plan) {
+  const planRef = firestore.collection('plan').doc(plan.id);
+  const completeData = {
+    timestamp: Date.now(),
+    done_activities: plan.done_activities,
+    total_activities: plan.activities.length,
+  };
+  await planRef.update({
+    running: false,
+    done_activities: 0,
+    complete: firebase.firestore.FieldValue.arrayUnion({ ...completeData }),
+  });
+  return completeData;
+}
+

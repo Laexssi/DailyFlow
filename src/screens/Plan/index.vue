@@ -33,10 +33,25 @@
       </div>
     </div>
 
-    <div class="plan__wrapper">
-      <div v-if="!loading" class="plan">
+    <div
+    class="plan__wrapper">
+      <div
+      v-if="!loading"
+      class="plan">
         <PlanCard
-        :plan="plan"/>
+        :plan="plan"
+        @start="startHandler"
+        @cancel="cancelHandler"
+        @complete="completeHandler"/>
+
+        <div
+        v-for="activity of activities"
+        class="plan__activities-list"
+        :key="activity.id">
+          <PlanActivityCard
+          :activityData="activity"
+          :running="plan.running"/>
+        </div>
       </div>
 
       <div
@@ -52,10 +67,14 @@
 <script>
   import { mapActions, mapMutations, mapState } from 'vuex';
   import PlanCard from 'components/PlanCard';
+  import PlanActivityCard from 'components/PlanActivityCard';
 
   export default {
     name: 'Plan',
-    components: { PlanCard },
+    components: {
+      PlanCard,
+      PlanActivityCard,
+    },
     async created() {
       if (this.plan) {
         this.loading = false;
@@ -74,16 +93,32 @@
     },
     methods: {
       ...mapMutations({ setPlan: 'plan/setPlan' }),
-      ...mapActions({ updatePlan: 'plan/updatePlan', updatePlanActivities: 'plan/updatePlanActivities' }),
+      ...mapActions({
+        updatePlan: 'plan/updatePlan',
+        updatePlanActivities: 'plan/updatePlanActivities',
+        updatePlanRunning: 'plan/updatePlanRunning',
+        resetPlanActivitiesCounter: 'plan/resetPlanActivitiesCounter',
+        completePlan: 'plan/completePlan',
+      }),
       editHandler() {
         this.$router.push({ name: 'plan-editor-edit', params: { id: this.plan.id } });
+      },
+      async startHandler() {
+        await this.updatePlanRunning({ running: true });
+      },
+      async cancelHandler() {
+        await this.updatePlanRunning({ running: false });
+        await this.resetPlanActivitiesCounter();
+      },
+      async completeHandler() {
+        await this.completePlan();
       },
       routerBackHandler() {
         this.$router.go(-1);
       },
     },
     computed: {
-      ...mapState('plan', ['plan']),
+      ...mapState('plan', ['plan', 'activities']),
       ...mapState('planList', ['list']),
     },
     data: () => ({
@@ -128,6 +163,17 @@
 
     @include between-children() {
       margin-bottom: 12px;
+    }
+  }
+
+  .plan__activities-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    @include between-children() {
+      margin-bottom: 8px;
     }
   }
 </style>

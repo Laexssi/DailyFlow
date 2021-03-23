@@ -22,7 +22,9 @@
     :value="completeStatus"
     height="8"/>
 
-    <div class="plan__activities-expiration">
+    <div
+    v-if="plan.running"
+    class="plan__activities-expiration">
       List will be completed on {{ expirationDate }}
     </div>
 
@@ -37,11 +39,28 @@
     v-if="!listMode"
     class="plan__controls">
       <v-btn
-      v-if="!running"
+      v-if="!plan.running"
       outlined
       @click="$emit('start')">
         Start
       </v-btn>
+
+      <div
+      v-else
+      class="d-flex">
+        <v-btn
+        outlined
+        @click="$emit('complete')"
+        class="mr-2">
+          Complete now
+        </v-btn>
+
+        <v-btn
+        outlined
+        @click="$emit('cancel')">
+          Cancel
+        </v-btn>
+      </div>
     </div>
   </div>
 </template>
@@ -58,10 +77,6 @@
         default: () => ({}),
       },
       listMode: {
-        type: Boolean,
-        default: false,
-      },
-      running: {
         type: Boolean,
         default: false,
       },
