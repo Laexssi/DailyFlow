@@ -83,7 +83,7 @@
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    width: 288px;
+    width: 768px;
 
     overflow: hidden;
 

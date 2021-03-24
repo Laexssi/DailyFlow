@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 const Login = () => import(/* webpackChunkName: "login" */'screens/Login');
 const PlanList = () => import(/* webpackChunkName: "plans" */'screens/PlanList');
 const Plan = () => import(/* webpackChunkName: "plan" */'screens/Plan');
+const PlanEditor = () => import(/* webpackChunkName: "plan-editor" */'screens/PlanEditor');
 const Library = () => import(/* webpackChunkName: "library" */'screens/Library');
 const Analytics = ()/* webpackChunkName: "analytics" */ => import('screens/Analytics');
 const ActivityEditor = ()/* webpackChunkName: "activity" */ => import('screens/ActivityEditor');
@@ -29,6 +30,18 @@ const routes = [
     path: '/plan/:id',
     name: 'plan',
     component: Plan,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/plan/new',
+    name: 'plan-editor-new',
+    component: PlanEditor,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/plan/edit/:id',
+    name: 'plan-editor-edit',
+    component: PlanEditor,
     meta: { requiresAuth: true },
   },
   {

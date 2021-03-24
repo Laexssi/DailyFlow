@@ -59,6 +59,8 @@
         return {
           'activity-editor-new': 'New activity',
           'activity-editor-edit': 'Edit activity',
+          'plan-editor-new': 'New plan',
+          'plan-editor-edit': 'Edit plan',
         }[this.$route.name] || capitalizeFirstLetter(this.$route.name);
       },
     },

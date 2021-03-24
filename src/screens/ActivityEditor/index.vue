@@ -147,19 +147,16 @@
       ActivityEditorLabel,
     },
     created() {
-      const listsData = [this.updateActivityList(), this.updateLabelList()];
-      Promise.all(listsData)
-        .then(() => {
+      this.updateLabelList()
+        .then(async () => {
           if (this.$route.params.id) {
             this.editMode = true;
-            const editingActivity = this.activityList.find(({ id }) => id === this.$route.params.id);
-            editingActivity.labels = editingActivity.labels.map((label) => label.id);
+            const editingActivity = await this.updateActivityById({ id: this.$route.params.id, updateList: false });
             this.setActivity(editingActivity);
-            this.cooldownTime = this.activity.cooldown / 3600 / 1000;
           }
           this.loading = false;
         })
-        .catch((e) => console.warn(e));
+        .catch((e) => console.error(e));
       this.setShowRouterBackButton(true);
     },
     mounted() {
@@ -176,7 +173,7 @@
         setShowRouterBackButton: 'appState/setShowRouterBackButton',
       }),
       ...mapActions({
-        updateActivityList: 'activityList/updateList',
+        updateActivityById: 'activityList/updateActivityById',
         updateLabelList: 'labelList/updateList',
         createActivity: 'activityEditor/createActivity',
         editActivity: 'activityEditor/editActivity',
@@ -235,15 +232,14 @@
       loading: true,
       editMode: false,
       emojiCategories: new Set(['Activity', 'Peoples', 'Foods', 'Nature', 'Places']),
-      cooldownTime: 0,
       showLabelPopup: false,
     }),
-    watch: {
-      cooldownTime(value) {
-        const normalizedValue = value * 60 * 60 * 1000;
-        this.setActivityKey({ key: 'cooldown', value: normalizedValue });
-      },
-    },
+    // watch: {
+    //   cooldownTime(value) {
+    //     const normalizedValue = value * 60 * 60 * 1000;
+    //     this.setActivityKey({ key: 'cooldown', value: normalizedValue });
+    //   },
+    // },
   };
 </script>
 
@@ -384,6 +380,7 @@
     transform: translate(-50%, 0);
 
     width: 75vw;
+    max-width: 768px;
   }
 
   .activity-editor__skeleton-wrapper {

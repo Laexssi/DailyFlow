@@ -38,10 +38,12 @@ export default {
       }
     },
     async updateActivityById({ commit }, payload) {
-        const { id } = payload;
+        const { id, updateList = true } = payload;
         try {
           const activityData = await fetchActivityById(id);
-          commit('setListItem', { id, activityData });
+          if (updateList) {
+            commit('setListItem', { id, activityData });
+          }
           return activityData;
         } catch (e) {
           return Promise.reject(e);

@@ -187,3 +187,9 @@ export async function completePlanRequest(plan) {
   return completeData;
 }
 
+export async function createPlanRequest(newPlan, uid) {
+  const planRef = firestore.collection('plan');
+  const { id: planId } = await planRef.add({ ...newPlan, userId: uid, creation_date: Date.now() });
+  await firestore.collection('plan').doc(planId).update({ id: planId });
+  return planId;
+}

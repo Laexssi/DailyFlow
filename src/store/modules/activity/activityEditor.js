@@ -43,8 +43,8 @@ export default {
     },
   },
   actions: {
-    async createActivity({ getters, rootState, commit }, payload) {
-      const newActivity = getters.getActivity || payload;
+    async createActivity({ getters, rootState, commit }, payload = null) {
+      const newActivity = payload || getters.getActivity;
       const { uid } = rootState.auth.user;
       if (!uid) throw new Error('user not found');
       if (!newActivity.name) throw new Error('name not found');

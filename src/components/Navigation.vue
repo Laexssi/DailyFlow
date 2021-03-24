@@ -73,6 +73,7 @@
       addNewEntity() {
         const routeTo = {
           library: 'activity-editor-new',
+          plans: 'plan-editor-new',
         }[this.$route.name];
 
         this.$router.push({ name: routeTo });
@@ -80,7 +81,7 @@
     },
     computed: {
       showNavigation() {
-        const noNavRoutes = ['login', 'activity-editor-edit', 'activity-editor-new', 'plan'];
+        const noNavRoutes = ['login', 'activity-editor-edit', 'activity-editor-new', 'plan-editor-new', 'plan-editor-edit', 'plan'];
         return !noNavRoutes.includes(this.$route.name);
       },
       navigationControls() {

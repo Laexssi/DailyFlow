@@ -176,6 +176,7 @@
 
     padding: 16px;
     background-color: $background-color;
+    margin-bottom: 16px;
 
     @include between-children() {
       margin-bottom: 8px;
@@ -183,6 +184,7 @@
 
     @include breakpoint-width(0, 768px) {
       width: 100%;
+      margin-bottom: 0;
     }
   }
 

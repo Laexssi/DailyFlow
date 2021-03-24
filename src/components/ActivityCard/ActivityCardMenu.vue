@@ -126,22 +126,6 @@
     }
   }
 
-  .activity-card__menu-content {
-    display: flex;
-    flex-direction: column;
-    padding: 8px;
-    background-color: #333333;
-    color: white;
-
-    .v-menu__content {
-      box-shadow: none;
-    }
-
-    .v-btn__content {
-      justify-content: space-between;
-    }
-  }
-
   .activity-card__menu-content__desc {
     text-transform: none;
     word-break: break-word;

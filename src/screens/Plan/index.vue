@@ -1,5 +1,5 @@
 <template>
-  <div class="main-screen__content main-screen__content--scroll">
+  <div>
     <div
     class="main-header">
       <div class="main-header__content">
@@ -34,7 +34,7 @@
     </div>
 
     <div
-    class="plan__wrapper">
+    class="main-screen__content main-screen__content--scroll">
       <div
       v-if="!loading"
       class="plan">
@@ -76,11 +76,6 @@
       PlanActivityCard,
     },
     async created() {
-      if (this.plan) {
-        this.loading = false;
-        return;
-      }
-
       await this.updatePlan({ id: this.$route.params.id });
 
       if (!this.plan) {
@@ -92,7 +87,11 @@
       this.loading = false;
     },
     methods: {
-      ...mapMutations({ setPlan: 'plan/setPlan' }),
+      ...mapMutations({
+        setPlan: 'plan/setPlan',
+        setEditPlan: 'planEditor/setPlan',
+        setEditPlanActivities: 'planEditor/setActivities',
+      }),
       ...mapActions({
         updatePlan: 'plan/updatePlan',
         updatePlanActivities: 'plan/updatePlanActivities',
@@ -101,6 +100,8 @@
         completePlan: 'plan/completePlan',
       }),
       editHandler() {
+        this.setEditPlan(this.plan);
+        this.setEditPlanActivities(this.activities);
         this.$router.push({ name: 'plan-editor-edit', params: { id: this.plan.id } });
       },
       async startHandler() {
@@ -156,10 +157,6 @@
     align-items: center;
     justify-content: flex-start;
     flex-grow: 1;
-
-    max-width: 768px;
-
-    padding: 16px;
 
     @include between-children() {
       margin-bottom: 12px;
