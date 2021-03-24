@@ -63,7 +63,7 @@
         dark
         rounded
         width="100%"
-        @click="createActivityHandler">
+        @click="createPlanHandler">
           {{ editMode ? 'Edit' : 'Create' }}
         </v-btn>
       </div>
@@ -90,7 +90,7 @@
           dark
           width="100%"
           color="#333333"
-          @click="$emit('edit')">
+          @click="showActivityPopup = true">
             Add activity from library
 
             <v-icon>
@@ -102,7 +102,7 @@
           dark
           width="100%"
           color="#333333"
-          @click="deleteConfirmation = true">
+          @click="createNewActivityHandler">
             Create new
 
             <v-icon>
@@ -129,11 +129,17 @@
 
   export default {
     name: 'PlanEditor',
+    props: {
+      from: {
+        type: String,
+        default: '',
+      },
+    },
     async created() {
       if (this.$route.params.id) {
         this.editMode = true;
 
-        if (!this.plan.name) {
+        if (this.from === 'list') {
           await this.updatePlan({ id: this.$route.params.id });
           await this.updatePlanActivities({ activities: this.plan.activities });
         }
@@ -142,8 +148,9 @@
       this.setShowRouterBackButton(true);
       this.loading = false;
     },
-    destroyed() {
+    beforeRouteLeave(to, from, next) {
       this.setShowRouterBackButton(false);
+      next();
     },
     methods: {
       ...mapActions({
@@ -162,7 +169,10 @@
 
         this.cooldownTime = +value;
       },
-      createActivityHandler() {
+      createNewActivityHandler() {
+        this.$router.push({ name: 'activity-editor-new', query: { planId: this.plan.id } });
+      },
+      createPlanHandler() {
 
       },
     },
@@ -194,7 +204,7 @@
         cooldownTime: 0,
         expirationDate: 0,
         inputRules: [(v) => v >= 0],
-        search: '',
+        showActivityPopup: false,
       };
     },
     watch: {

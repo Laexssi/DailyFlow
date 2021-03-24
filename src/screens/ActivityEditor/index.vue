@@ -146,28 +146,34 @@
       VEmojiPicker,
       ActivityEditorLabel,
     },
-    created() {
-      this.updateLabelList()
-        .then(async () => {
-          if (this.$route.params.id) {
-            this.editMode = true;
-            const editingActivity = await this.updateActivityById({ id: this.$route.params.id, updateList: false });
-            this.setActivity(editingActivity);
-          }
-          this.loading = false;
-        })
-        .catch((e) => console.error(e));
+    props: {
+      planId: {
+        type: String,
+        default: null,
+      },
+    },
+    async created() {
+      await this.updateLabelList();
+      if (this.$route.params.id) {
+        this.editMode = true;
+        const editingActivity = await this.updateActivityById({ id: this.$route.params.id, updateList: false });
+        this.setActivity(editingActivity);
+      }
+      this.loading = false;
       this.setShowRouterBackButton(true);
     },
     mounted() {
       this.randomizeEmoji();
     },
-    destroyed() {
+    beforeRouteLeave(to, from, next) {
       this.setShowRouterBackButton(false);
+      this.resetActivity();
+      next();
     },
     methods: {
       ...mapMutations({
         setActivity: 'activityEditor/setActivity',
+        resetActivity: 'activityEditor/resetActivity',
         setActivityKey: 'activityEditor/setActivityKey',
         removeLabel: 'activityEditor/removeLabel',
         setShowRouterBackButton: 'appState/setShowRouterBackButton',
@@ -177,6 +183,7 @@
         updateLabelList: 'labelList/updateList',
         createActivity: 'activityEditor/createActivity',
         editActivity: 'activityEditor/editActivity',
+        addPlanActivity: 'plan/addPlanActivity',
       }),
       async createActivityHandler() {
         if (this.editMode) {
@@ -184,6 +191,14 @@
           await this.$router.push({ name: 'library' });
           return;
         }
+
+        if (this.planId) {
+          const activityId = await this.createActivity();
+          this.addPlanActivity({ activityId, planId: this.planId });
+          await this.$router.replace({ name: 'plan-editor-edit', params: { id: this.planId } });
+          return;
+        }
+
         await this.createActivity();
         await this.$router.push({ name: 'library' });
       },

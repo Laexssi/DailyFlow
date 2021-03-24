@@ -8,6 +8,7 @@ import {
  cancelCompletePlanActivityRequest,
  updatePlanRunningRequest,
  completePlanRequest,
+ addPlanActivityRequest,
 } from 'api';
 
 export default {
@@ -135,6 +136,15 @@ export default {
           return res;
       } catch (e) {
         return Promise.reject();
+      }
+    },
+    async addPlanActivity(context, payload) {
+      const { activityId, planId } = payload;
+      try {
+        await addPlanActivityRequest(activityId, planId);
+        return activityId;
+      } catch (e) {
+        return Promise.reject(e);
       }
     },
   },

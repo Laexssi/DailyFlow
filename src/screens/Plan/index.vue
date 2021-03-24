@@ -102,7 +102,7 @@
       editHandler() {
         this.setEditPlan(this.plan);
         this.setEditPlanActivities(this.activities);
-        this.$router.push({ name: 'plan-editor-edit', params: { id: this.plan.id } });
+        this.$router.push({ name: 'plan-editor-edit', params: { id: this.plan.id }, query: { from: 'list' } });
       },
       async startHandler() {
         await this.updatePlanRunning({ running: true });

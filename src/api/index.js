@@ -47,6 +47,19 @@ export async function cancelCompleteActivity(activity) {
 
 export async function deleteActivityRequest(id) {
   await firestore.collection('activity').doc(id).delete();
+  const plansRef = await firestore.collection('plan');
+
+  const query = plansRef.where('activities', 'array-contains', id);
+  const promises = [];
+  query.get().then((snapshots) => {
+    snapshots.forEach((snapshot) => {
+      promises.push(snapshot.ref.update({
+            activities: firebase.firestore.FieldValue.arrayRemove(`${id}`),
+          }));
+    });
+  });
+
+  await Promise.all(promises);
   return id;
 }
 
@@ -132,7 +145,7 @@ export async function fetchActivitiesByIds(ids) {
   // eslint-disable-next-line no-restricted-syntax
   for (const chunk of chunks) {
     // eslint-disable-next-line no-await-in-loop
-    const res = await firestore.collection('activity').where('id', '==', `${chunk}`).get();
+    const res = await firestore.collection('activity').where('id', 'in', chunk).get();
     res.forEach((doc) => list.push(doc.data()));
   }
   return list;
@@ -192,4 +205,11 @@ export async function createPlanRequest(newPlan, uid) {
   const { id: planId } = await planRef.add({ ...newPlan, userId: uid, creation_date: Date.now() });
   await firestore.collection('plan').doc(planId).update({ id: planId });
   return planId;
+}
+
+export async function addPlanActivityRequest(activityId, planId) {
+  const planRef = firestore.collection('plan').doc(planId);
+  await planRef.update({
+    activities: firebase.firestore.FieldValue.arrayUnion(activityId),
+  });
 }

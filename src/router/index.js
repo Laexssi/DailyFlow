@@ -42,6 +42,7 @@ const routes = [
     path: '/plan/edit/:id',
     name: 'plan-editor-edit',
     component: PlanEditor,
+    props: (route) => ({ fromList: route.query.fromList }),
     meta: { requiresAuth: true },
   },
   {
@@ -60,6 +61,7 @@ const routes = [
     path: '/activity/new',
     name: 'activity-editor-new',
     component: ActivityEditor,
+    props: (route) => ({ planId: route.query.planId }),
     meta: { requiresAuth: true },
   },
   {

@@ -42,7 +42,7 @@ export default {
       }
     },
     async updatePlanActivities({ state, commit }, payload) {
-      const activities = state.plan?.activities || payload.activities;
+      const activities = payload.activities || state.plan?.activities;
       try {
         const list = await fetchActivitiesByIds(activities);
         commit('setActivities', list);

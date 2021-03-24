@@ -29,6 +29,9 @@ export default {
     setActivity(state, value) {
       state.activity = value;
     },
+    resetActivity(state) {
+      state.activity = { ...activitySchema };
+    },
     setActivityKey(state, { key, value }) {
       state.activity[key] = value;
     },
@@ -50,7 +53,7 @@ export default {
       if (!newActivity.name) throw new Error('name not found');
       try {
         const activityId = await createActivityRequest(newActivity, uid);
-        commit('setActivity', { ...activitySchema });
+        commit('resetActivity');
         return activityId;
       } catch (err) {
         return Promise.reject(err);
@@ -60,7 +63,7 @@ export default {
       const activity = getters.getActivity || payload;
       try {
         const activityId = await editActivityRequest(activity);
-        commit('setActivity', { ...activitySchema });
+        commit('resetActivity');
         return activityId;
       } catch (err) {
         return Promise.reject(err);
