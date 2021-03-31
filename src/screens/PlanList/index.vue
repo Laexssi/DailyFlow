@@ -59,6 +59,7 @@
   .plan__list {
     display: flex;
     flex-flow: row wrap;
+    justify-content: center;
     overflow-y: auto;
 
     padding-bottom: 76px;

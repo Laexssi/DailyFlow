@@ -54,7 +54,8 @@ export async function deleteActivityRequest(id) {
   query.get().then((snapshots) => {
     snapshots.forEach((snapshot) => {
       promises.push(snapshot.ref.update({
-            activities: firebase.firestore.FieldValue.arrayRemove(`${id}`),
+            activities: firebase.firestore.FieldValue.arrayRemove(id),
+            done_activities: firebase.firestore.FieldValue.arrayRemove(id),
           }));
     });
   });
@@ -136,6 +137,7 @@ export async function deletePlanRequest(id) {
 }
 
 export async function fetchActivitiesByIds(ids) {
+  if (ids.length === 0) return [];
   const chunks = [];
   for (let i = 0; i <= ids.length; i += QUERY_IN_LIMIT) {
     const chunk = ids.slice(i, i + QUERY_IN_LIMIT);
@@ -154,25 +156,25 @@ export async function fetchActivitiesByIds(ids) {
 export async function resetPlanActivitiesCounterRequest(plan) {
   const planRef = firestore.collection('plan').doc(plan.id);
   await planRef.update({
-    done_activities: 0,
+    done_activities: [],
   });
   return 0;
 }
 
-export async function completePlanActivityRequest(plan) {
+export async function completePlanActivityRequest(plan, activityId) {
   const planRef = firestore.collection('plan').doc(plan.id);
-  const doneActivitiesCount = plan.done_activities + 1;
+  const doneActivitiesCount = plan.done_activities.length + 1;
   await planRef.update({
-    done_activities: doneActivitiesCount,
+    done_activities: firebase.firestore.FieldValue.arrayUnion(activityId),
   });
   return doneActivitiesCount;
 }
 
-export async function cancelCompletePlanActivityRequest(plan) {
+export async function cancelCompletePlanActivityRequest(plan, activityId) {
   const planRef = firestore.collection('plan').doc(plan.id);
-  const doneActivitiesCount = plan.done_activities - 1;
+  const doneActivitiesCount = plan.done_activities.length - 1;
   await planRef.update({
-    done_activities: doneActivitiesCount,
+    done_activities: firebase.firestore.FieldValue.arrayRemove(activityId),
   });
   return doneActivitiesCount;
 }
@@ -190,11 +192,11 @@ export async function completePlanRequest(plan) {
   const completeData = {
     timestamp: Date.now(),
     done_activities: plan.done_activities,
-    total_activities: plan.activities.length,
+    total_activities: plan.activities,
   };
   await planRef.update({
     running: false,
-    done_activities: 0,
+    done_activities: [],
     complete: firebase.firestore.FieldValue.arrayUnion({ ...completeData }),
   });
   return completeData;
@@ -211,5 +213,13 @@ export async function addPlanActivityRequest(activityId, planId) {
   const planRef = firestore.collection('plan').doc(planId);
   await planRef.update({
     activities: firebase.firestore.FieldValue.arrayUnion(activityId),
+  });
+}
+
+export async function removePlanActivityRequest(activityId, planId) {
+  const planRef = firestore.collection('plan').doc(planId);
+  await planRef.update({
+    activities: firebase.firestore.FieldValue.arrayRemove(activityId),
+    done_activities: firebase.firestore.FieldValue.arrayRemove(activityId),
   });
 }

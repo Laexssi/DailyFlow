@@ -1,6 +1,6 @@
 <template>
   <div class="plan-editor__wrapper">
-    <div v-if="!loading" class="activity-editor">
+    <div v-if="!loading" class="plan-editor">
       <v-text-field
       v-model="planName"
       outlined
@@ -111,6 +111,17 @@
           </v-btn>
         </div>
       </v-menu>
+
+      <div
+      v-for="activity of activities"
+      class="plan__activities-list"
+      :key="activity.id">
+        <PlanActivityCard
+        :activityData="activity"
+        :running="false"
+        :deletable="true"
+        @delete="deleteHandler($event)"/>
+      </div>
     </div>
 
     <div v-else class="plan-editor__skeleton-wrapper">
@@ -123,12 +134,16 @@
 </template>
 
 <script>
+  import PlanActivityCard from 'components/PlanActivityCard';
   import { mapActions, mapMutations, mapState } from 'vuex';
   import debounce from 'lodash/debounce';
   import dayjs from 'dayjs';
 
   export default {
     name: 'PlanEditor',
+    components: {
+      PlanActivityCard,
+    },
     props: {
       from: {
         type: String,
@@ -139,7 +154,7 @@
       if (this.$route.params.id) {
         this.editMode = true;
 
-        if (this.from === 'list') {
+        if (this.from !== 'list' || !this.plan.name) {
           await this.updatePlan({ id: this.$route.params.id });
           await this.updatePlanActivities({ activities: this.plan.activities });
         }
@@ -156,6 +171,7 @@
       ...mapActions({
         updatePlan: 'planEditor/updatePlan',
         updatePlanActivities: 'planEditor/updatePlanActivities',
+        removeActivityFromPlan: 'planEditor/removeActivityFromPlan',
       }),
       ...mapMutations({
         setShowRouterBackButton: 'appState/setShowRouterBackButton',
@@ -171,6 +187,9 @@
       },
       createNewActivityHandler() {
         this.$router.push({ name: 'activity-editor-new', query: { planId: this.plan.id } });
+      },
+      async deleteHandler(activityId) {
+        await this.removeActivityFromPlan({ planId: this.plan.id, activityId });
       },
       createPlanHandler() {
 
@@ -223,7 +242,7 @@
     justify-content: center;
   }
 
-  .activity-editor {
+  .plan-editor {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -231,6 +250,7 @@
     flex-grow: 1;
 
     max-width: 768px;
+    min-width: 0;
 
     padding: 16px;
 
@@ -346,6 +366,18 @@
 
     .v-btn__content {
       justify-content: space-between;
+    }
+  }
+
+  .plan__activities-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    @include between-children() {
+      margin-bottom: 8px;
     }
   }
 

@@ -33,14 +33,14 @@ export default {
       const index = state.activities.findIndex((item) => item.id === id);
       state.activities.splice(index, 1, activityData);
     },
-    incrementDoneActivity(state) {
-      state.plan.done_activities++;
+    addDoneActivity(state, value) {
+      state.plan.done_activities.push(value);
     },
-    decrementDoneActivity(state) {
-      state.plan.done_activities--;
+    removeDoneActivity(state, value) {
+      state.plan.done_activities = state.plan.done_activities.filter((activity) => activity !== value);
     },
     resetDoneActivity(state) {
-      state.plan.done_activities = 0;
+      state.plan.done_activities = [];
     },
     setPlanState(state, isRunning) {
       state.plan.running = isRunning;
@@ -88,9 +88,10 @@ export default {
     },
     async completePlanActivity({ state, commit }, payload) {
       const plan = state.plan || payload.plan;
+      const { activityId } = payload;
       try {
-        const completeActivityCount = await completePlanActivityRequest(plan);
-        commit('incrementDoneActivity');
+        const completeActivityCount = await completePlanActivityRequest(plan, activityId);
+        commit('addDoneActivity', activityId);
         return completeActivityCount;
       } catch (e) {
         return Promise.reject(e);
@@ -98,9 +99,10 @@ export default {
     },
     async cancelCompletePlanActivity({ state, commit }, payload) {
       const plan = state.plan || payload.plan;
+      const { activityId } = payload;
       try {
-        const completeActivityCount = await cancelCompletePlanActivityRequest(plan);
-        commit('decrementDoneActivity');
+        const completeActivityCount = await cancelCompletePlanActivityRequest(plan, activityId);
+        commit('removeDoneActivity', activityId);
         return completeActivityCount;
       } catch (e) {
         return Promise.reject(e);

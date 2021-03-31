@@ -50,7 +50,8 @@
         :key="activity.id">
           <PlanActivityCard
           :activityData="activity"
-          :running="plan.running"/>
+          :running="plan.running"
+          :done="checkIsActivityDone(activity.id)"/>
         </div>
       </div>
 
@@ -117,6 +118,9 @@
       routerBackHandler() {
         this.$router.go(-1);
       },
+      checkIsActivityDone(id) {
+        return this.plan.done_activities.includes(id);
+      },
     },
     computed: {
       ...mapState('plan', ['plan', 'activities']),
@@ -169,6 +173,7 @@
     justify-content: flex-start;
     align-items: center;
     width: 100%;
+    min-width: 0;
     @include between-children() {
       margin-bottom: 8px;
     }

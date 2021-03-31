@@ -1,4 +1,6 @@
-import { createPlanRequest, fetchPlanById, fetchActivitiesByIds } from 'api';
+import {
+ createPlanRequest, fetchPlanById, fetchActivitiesByIds, removePlanActivityRequest,
+} from 'api';
 import cloneDeep from 'lodash/cloneDeep';
 
 const planSchema = {
@@ -6,6 +8,7 @@ const planSchema = {
   cooldown_expiration_date: 0,
   complete: [],
   activities: [],
+  done_activities: [],
   name: null,
   id: null,
   userId: null,
@@ -28,6 +31,9 @@ export default {
     },
     setPlanKey(state, { key, value }) {
       state.plan[key] = value;
+    },
+    removeActivity(state, value) {
+      state.activities = state.activities.filter(({ id }) => id !== value);
     },
   },
   actions: {
@@ -60,6 +66,16 @@ export default {
         const planId = await createPlanRequest(newPlan, uid);
         commit('setActivity', cloneDeep(planSchema));
         return planId;
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    },
+    async removeActivityFromPlan({ commit }, payload) {
+      const { activityId, planId } = payload;
+      try {
+        await removePlanActivityRequest(activityId, planId);
+        commit('removeActivity', activityId);
+        return activityId;
       } catch (err) {
         return Promise.reject(err);
       }

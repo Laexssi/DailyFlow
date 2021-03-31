@@ -91,11 +91,11 @@
     computed: {
       activitiesCount() {
         return this.plan.cooldown_expiration_date
-          ? `${this.plan.done_activities}/ ${this.plan.activities.length}`
-          : this.plan.done_activities;
+          ? `${this.plan.done_activities.length}/ ${this.plan.activities.length}`
+          : this.plan.done_activities.length;
       },
       completeStatus() {
-        return (this.plan.done_activities / this.plan.activities.length) * 100;
+        return (this.plan.done_activities.length / this.plan.activities.length) * 100;
       },
       expirationDate() {
         return dayjs(this.plan.cooldown_expiration_date).format('DD, MMMM');
@@ -123,7 +123,7 @@
       margin-bottom: 8px;
     }
 
-    @include breakpoint-width(0, 768px) {
+    @include breakpoint-width(0, 812px) {
       width: 100%;
     }
   }

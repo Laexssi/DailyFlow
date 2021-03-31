@@ -27,47 +27,6 @@
       class="activity-editor__input"
       label="Name"/>
 
-      <!--      <div class="activity-editor__cooldown-container mt-1">-->
-      <!--        <div class="activity-editor__cooldown-row">-->
-      <!--          <div class="activity-editor__cooldown-heading mb-1 text-center">-->
-      <!--            <span>Cooldown period</span>-->
-      <!--          </div>-->
-
-      <!--          <div class="activity-editor__cooldown-controls">-->
-      <!--            <v-btn-->
-      <!--            fab-->
-      <!--            xSmall-->
-      <!--            elevation="0"-->
-      <!--            color="#BDBDBD"-->
-      <!--            :disabled="cooldownTime === 0"-->
-      <!--            @click="cooldownTime&#45;&#45;">-->
-      <!--              <v-icon>-->
-      <!--                mdi-chevron-left-->
-      <!--              </v-icon>-->
-      <!--            </v-btn>-->
-
-      <!--            <div class="activity-editor__cooldown-value">-->
-      <!--              <span> {{ cooldownTime }} </span>-->
-      <!--            </div>-->
-
-      <!--            <v-btn-->
-      <!--            fab-->
-      <!--            xSmall-->
-      <!--            elevation="0"-->
-      <!--            color="#BDBDBD"-->
-      <!--            @click="cooldownTime++">-->
-      <!--              <v-icon>-->
-      <!--                mdi-chevron-right-->
-      <!--              </v-icon>-->
-      <!--            </v-btn>-->
-
-      <!--            <div class="ml-2">-->
-      <!--              <span>hour</span>-->
-      <!--            </div>-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--      </div>-->
-
       <div class="activity-editor__label-control">
         <v-dialog
         v-model="showLabelPopup"
@@ -194,7 +153,8 @@
 
         if (this.planId) {
           const activityId = await this.createActivity();
-          this.addPlanActivity({ activityId, planId: this.planId });
+          await this.addPlanActivity({ activityId, planId: this.planId });
+          await this.$router.go(-1);
           await this.$router.replace({ name: 'plan-editor-edit', params: { id: this.planId } });
           return;
         }
@@ -249,12 +209,6 @@
       emojiCategories: new Set(['Activity', 'Peoples', 'Foods', 'Nature', 'Places']),
       showLabelPopup: false,
     }),
-    // watch: {
-    //   cooldownTime(value) {
-    //     const normalizedValue = value * 60 * 60 * 1000;
-    //     this.setActivityKey({ key: 'cooldown', value: normalizedValue });
-    //   },
-    // },
   };
 </script>
 

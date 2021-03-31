@@ -8,9 +8,21 @@
       <span class="plan-activity-card__name">
         {{ activityData.name }}
       </span>
+
+      <v-btn
+      v-if="deletable"
+      class="ml-auto"
+      icon
+      @click="$emit('delete', activityData.id)">
+        <v-icon>
+          mdi-delete
+        </v-icon>
+      </v-btn>
     </div>
 
-    <div class="d-flex align-center">
+    <div
+    v-if="!deletable"
+    class="d-flex align-center">
       <v-checkbox
       v-if="running"
       v-model="isCompleted"
@@ -41,6 +53,14 @@
         type: Boolean,
         default: false,
       },
+      done: {
+        type: Boolean,
+        default: false,
+      },
+      deletable: {
+        type: Boolean,
+        default: false,
+      },
     },
     methods: {
       ...mapMutations({
@@ -55,23 +75,25 @@
         cancelCompletePlanActivity: 'plan/cancelCompletePlanActivity',
       }),
     },
-    data: () => ({
-      isCompleted: false,
-      isLoaded: true,
-    }),
+    data() {
+      return {
+        isCompleted: this.done,
+        isLoaded: true,
+      };
+    },
     watch: {
       async isCompleted(val) {
         this.isLoaded = false;
         if (val) {
           await this.completeActivity(this.activityData);
           await this.updateActivityById(this.activityData);
-          await this.completePlanActivity();
+          await this.completePlanActivity({ activityId: this.activityData.id });
           this.isLoaded = true;
           return;
         }
         await this.cancelLastComplete(this.activityData);
         await this.updateActivityById(this.activityData);
-        this.cancelCompletePlanActivity();
+        this.cancelCompletePlanActivity({ activityId: this.activityData.id });
         this.isLoaded = true;
       },
     },
@@ -84,6 +106,7 @@
     flex-direction: column;
     flex-shrink: 0;
     width: 768px;
+    min-width: 0;
 
     overflow: hidden;
 
@@ -103,6 +126,7 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
+    min-width: 0;
 
     align-items: flex-start;
   }
@@ -114,6 +138,7 @@
   .plan-activity-card__name {
     font-size: 24px;
     font-weight: 400;
+    min-width: 0;
 
     color: black;
     @extend %one-line;
