@@ -68,7 +68,9 @@
         </v-btn>
       </div>
 
-      <v-menu offsetY>
+      <v-menu
+      offsetY
+      closeOnContentClick>
         <template
         v-slot:activator="{ on, attrs }">
           <v-btn
@@ -86,17 +88,30 @@
         </template>
 
         <div class="plan-editor__menu-content">
-          <v-btn
-          dark
-          width="100%"
-          color="#333333"
-          @click="showActivityPopup = true">
-            Add activity from library
+          <v-dialog
+          v-model="showAddActivityPopup"
+          maxWidth="768">
+            <template
+            v-slot:activator="{ on, attrs }">
+              <v-btn
+              dark
+              width="100%"
+              color="#333333"
+              @click="showAddActivityPopup = true"
+              v-bind="attrs"
+              v-on="on">
+                Add activity from library
 
-            <v-icon>
-              mdi-library-shelves
-            </v-icon>
-          </v-btn>
+                <v-icon>
+                  mdi-library-shelves
+                </v-icon>
+              </v-btn>
+            </template>
+
+            <PlanEditorAddActivityPopup
+            v-if="showAddActivityPopup"
+            @close="showAddActivityPopup = false"/>
+          </v-dialog>
 
           <v-btn
           dark
@@ -135,7 +150,10 @@
 
 <script>
   import PlanActivityCard from 'components/PlanActivityCard';
-  import { mapActions, mapMutations, mapState } from 'vuex';
+  import PlanEditorAddActivityPopup from './PlanEditorAddActivityPopup';
+  import {
+    mapActions, mapMutations, mapState,
+  } from 'vuex';
   import debounce from 'lodash/debounce';
   import dayjs from 'dayjs';
 
@@ -143,6 +161,7 @@
     name: 'PlanEditor',
     components: {
       PlanActivityCard,
+      PlanEditorAddActivityPopup,
     },
     props: {
       from: {
@@ -151,7 +170,15 @@
       },
     },
     async created() {
-      if (this.$route.params.id) {
+      if (!this.$route.params['no-reset']) {
+        this.resetPlan();
+      }
+
+      if (this.$route.params['no-reset']) {
+        await this.updatePlanActivities({ activities: this.plan.activities });
+      }
+
+      if (this.$route.params.id && this.$route.params.id !== 'new') {
         this.editMode = true;
 
         if (this.from !== 'list' || !this.plan.name) {
@@ -159,6 +186,7 @@
           await this.updatePlanActivities({ activities: this.plan.activities });
         }
       }
+
       this.cooldownTime = this.plan.cooldown;
       this.setShowRouterBackButton(true);
       this.loading = false;
@@ -171,11 +199,14 @@
       ...mapActions({
         updatePlan: 'planEditor/updatePlan',
         updatePlanActivities: 'planEditor/updatePlanActivities',
+        createPlan: 'planEditor/createPlan',
+        editPlan: 'planEditor/editPlan',
         removeActivityFromPlan: 'planEditor/removeActivityFromPlan',
       }),
       ...mapMutations({
         setShowRouterBackButton: 'appState/setShowRouterBackButton',
         setPlanKey: 'planEditor/setPlanKey',
+        resetPlan: 'planEditor/resetPlan',
       }),
       cooldownHandler(value) {
         if (value <= 0) {
@@ -186,13 +217,21 @@
         this.cooldownTime = +value;
       },
       createNewActivityHandler() {
-        this.$router.push({ name: 'activity-editor-new', query: { planId: this.plan.id } });
+        this.$router.push({ name: 'activity-editor-new', query: { planId: this.editMode ? this.plan.id : 'new' } });
       },
       async deleteHandler(activityId) {
         await this.removeActivityFromPlan({ planId: this.plan.id, activityId });
       },
-      createPlanHandler() {
+      async createPlanHandler() {
+        if (!this.editMode) {
+          const id = await this.createPlan();
+          this.resetPlan();
+          await this.$router.push({ name: 'plan', params: { id } });
+          return;
+        }
 
+        const editId = await this.editPlan();
+        await this.$router.push({ name: 'plan', params: { editId } });
       },
     },
     computed: {
@@ -223,7 +262,7 @@
         cooldownTime: 0,
         expirationDate: 0,
         inputRules: [(v) => v >= 0],
-        showActivityPopup: false,
+        showAddActivityPopup: false,
       };
     },
     watch: {

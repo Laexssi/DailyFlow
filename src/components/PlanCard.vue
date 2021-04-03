@@ -7,7 +7,7 @@
     </div>
 
     <div class="plan__activities-count">
-      <span>
+      <span class="plan__activities-count__text">
         Activities
       </span>
 
@@ -90,9 +90,9 @@
     },
     computed: {
       activitiesCount() {
-        return this.plan.cooldown_expiration_date
+        return this.plan.running
           ? `${this.plan.done_activities.length}/ ${this.plan.activities.length}`
-          : this.plan.done_activities.length;
+          : `${this.plan.activities.length}`;
       },
       completeStatus() {
         return (this.plan.done_activities.length / this.plan.activities.length) * 100;
@@ -140,6 +140,10 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+  }
+
+  .plan__activities-count__text {
+    font-size: 14px;
   }
 
   .plan__activities-count__count {

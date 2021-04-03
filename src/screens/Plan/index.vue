@@ -29,6 +29,14 @@
               mdi-pencil
             </v-icon>
           </v-btn>
+
+          <v-btn
+          icon
+          @click="deleteHandler">
+            <v-icon color="black">
+              mdi-delete
+            </v-icon>
+          </v-btn>
         </div>
       </div>
     </div>
@@ -99,11 +107,16 @@
         updatePlanRunning: 'plan/updatePlanRunning',
         resetPlanActivitiesCounter: 'plan/resetPlanActivitiesCounter',
         completePlan: 'plan/completePlan',
+        deletePlan: 'plan/deletePlan',
       }),
       editHandler() {
         this.setEditPlan(this.plan);
         this.setEditPlanActivities(this.activities);
         this.$router.push({ name: 'plan-editor-edit', params: { id: this.plan.id }, query: { from: 'list' } });
+      },
+      async deleteHandler() {
+        await this.deletePlan(this.plan.id);
+        await this.$router.push({ name: 'plans' });
       },
       async startHandler() {
         await this.updatePlanRunning({ running: true });
@@ -116,7 +129,7 @@
         await this.completePlan();
       },
       routerBackHandler() {
-        this.$router.go(-1);
+        this.$router.push({ name: 'plans' });
       },
       checkIsActivityDone(id) {
         return this.plan.done_activities.includes(id);

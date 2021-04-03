@@ -1,5 +1,5 @@
 import {
- createPlanRequest, fetchPlanById, fetchActivitiesByIds, removePlanActivityRequest,
+ createPlanRequest, editPlanRequest, fetchPlanById, fetchActivitiesByIds, removePlanActivityRequest,
 } from 'api';
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -9,6 +9,7 @@ const planSchema = {
   complete: [],
   activities: [],
   done_activities: [],
+  running: false,
   name: null,
   id: null,
   userId: null,
@@ -34,6 +35,11 @@ export default {
     },
     removeActivity(state, value) {
       state.activities = state.activities.filter(({ id }) => id !== value);
+      state.planEditor.activities = state.planEditor.activities.filter((id) => id !== value);
+    },
+    resetPlan(state) {
+      state.plan = cloneDeep(planSchema);
+      state.activities = [];
     },
   },
   actions: {
@@ -64,7 +70,17 @@ export default {
       if (!newPlan.name) throw new Error('name not found');
       try {
         const planId = await createPlanRequest(newPlan, uid);
-        commit('setActivity', cloneDeep(planSchema));
+        commit('resetPlan');
+        return planId;
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    },
+    async editPlan({ state, commit }, payload) {
+      const plan = payload || state.plan;
+      try {
+        const planId = await editPlanRequest(plan);
+        commit('resetPlan');
         return planId;
       } catch (err) {
         return Promise.reject(err);

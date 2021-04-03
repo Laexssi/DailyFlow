@@ -209,6 +209,18 @@ export async function createPlanRequest(newPlan, uid) {
   return planId;
 }
 
+export async function editPlanRequest(plan) {
+  const {
+    name, cooldown, cooldown_expiration_date, activities, id,
+  } = plan;
+
+  const planRef = firestore.collection('plan').doc(id);
+  await planRef.update({
+    name, cooldown, cooldown_expiration_date, activities,
+  });
+  return id;
+}
+
 export async function addPlanActivityRequest(activityId, planId) {
   const planRef = firestore.collection('plan').doc(planId);
   await planRef.update({

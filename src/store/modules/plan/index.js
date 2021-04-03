@@ -66,7 +66,8 @@ export default {
         return Promise.reject(e);
       }
     },
-    async updatePlanActivities({ state, commit }, payload) {
+    async updatePlanActivities({ state, commit }, payload = {}) {
+      console.log(state.plan?.activities);
       const activities = state.plan?.activities || payload.activities;
       try {
         const list = await fetchActivitiesByIds(activities);

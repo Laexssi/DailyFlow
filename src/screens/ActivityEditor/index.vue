@@ -94,7 +94,9 @@
 <script>
   import ActivityEditorLabel from './ActivityEditorLabel';
   import { VEmojiPicker, emojisDefault } from 'v-emoji-picker';
-  import { mapGetters, mapMutations, mapActions } from 'vuex';
+  import {
+    mapGetters, mapMutations, mapActions, mapState,
+  } from 'vuex';
 
   import debounce from 'lodash/debounce';
   import find from 'lodash/find';
@@ -136,6 +138,7 @@
         setActivityKey: 'activityEditor/setActivityKey',
         removeLabel: 'activityEditor/removeLabel',
         setShowRouterBackButton: 'appState/setShowRouterBackButton',
+        setPlanKey: 'planEditor/setPlanKey',
       }),
       ...mapActions({
         updateActivityById: 'activityList/updateActivityById',
@@ -153,6 +156,13 @@
 
         if (this.planId) {
           const activityId = await this.createActivity();
+
+          if (this.planId === 'new') {
+            await this.setPlanKey({ key: 'activities', value: [...this.plan.activities, activityId] });
+            await this.$router.replace({ name: 'plan-editor-new', params: { 'no-reset': true } });
+            return;
+          }
+
           await this.addPlanActivity({ activityId, planId: this.planId });
           await this.$router.go(-1);
           await this.$router.replace({ name: 'plan-editor-edit', params: { id: this.planId } });
@@ -171,6 +181,7 @@
       },
     },
     computed: {
+      ...mapState('planEditor', ['plan']),
       ...mapGetters({
         activity: 'activityEditor/getActivity',
         activityList: 'activityList/getList',

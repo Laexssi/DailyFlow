@@ -58,24 +58,15 @@
 
   .plan__list {
     display: flex;
-    flex-flow: row wrap;
     justify-content: center;
     overflow-y: auto;
+    flex-flow: column nowrap;
+    align-items: center;
 
     padding-bottom: 76px;
 
     @include between-children() {
-      margin-right: 16px;
-    }
-
-    @include breakpoint-width(0, 768px) {
-      flex-flow: column nowrap;
-      align-items: center;
-
-      @include between-children() {
-        margin-right: 0;
-        margin-bottom: 16px;
-      }
+      margin-bottom: 16px;
     }
   }
 </style>

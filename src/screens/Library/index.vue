@@ -66,6 +66,7 @@
   .library__list {
     display: flex;
     flex-flow: row wrap;
+    justify-content: center;
 
     padding-bottom: 76px;
 
