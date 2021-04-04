@@ -128,10 +128,10 @@
       </v-menu>
 
       <div
-      v-for="activity of activities"
-      class="plan__activities-list"
-      :key="activity.id">
+      class="plan__activities-list">
         <PlanActivityCard
+        v-for="activity of activities"
+        :key="activity.id"
         :activityData="activity"
         :running="false"
         :deletable="true"
@@ -170,21 +170,17 @@
       },
     },
     async created() {
+      console.log(this.$route.params);
       if (!this.$route.params['no-reset']) {
         this.resetPlan();
+        await this.updatePlan({ id: this.$route.params.id });
       }
 
-      if (this.$route.params['no-reset']) {
-        await this.updatePlanActivities({ activities: this.plan.activities });
-      }
+      await this.updateActivityList();
+      await this.updatePlanActivities({ activities: this.plan.activities });
 
       if (this.$route.params.id && this.$route.params.id !== 'new') {
         this.editMode = true;
-
-        if (this.from !== 'list' || !this.plan.name) {
-          await this.updatePlan({ id: this.$route.params.id });
-          await this.updatePlanActivities({ activities: this.plan.activities });
-        }
       }
 
       this.cooldownTime = this.plan.cooldown;
@@ -202,6 +198,7 @@
         createPlan: 'planEditor/createPlan',
         editPlan: 'planEditor/editPlan',
         removeActivityFromPlan: 'planEditor/removeActivityFromPlan',
+        updateActivityList: 'activityList/updateList',
       }),
       ...mapMutations({
         setShowRouterBackButton: 'appState/setShowRouterBackButton',
@@ -415,6 +412,9 @@
     align-items: center;
     width: 100%;
     min-width: 0;
+
+    overflow-y: auto;
+    height: 300px;
     @include between-children() {
       margin-bottom: 8px;
     }

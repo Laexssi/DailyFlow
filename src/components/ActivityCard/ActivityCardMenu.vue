@@ -66,7 +66,8 @@
       class="activity-card__menu-content__controls">
         <v-btn
         medium
-        @click="$emit('delete')">
+        :loading="deleteLoading"
+        @click="$emit('delete'); deleteLoading = true">
           Delete
 
           <v-icon>
@@ -100,6 +101,7 @@
     },
     data: () => ({
       deleteConfirmation: false,
+      deleteLoading: false,
     }),
     watch: {
       menuOpen(val) {

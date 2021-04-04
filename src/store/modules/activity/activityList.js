@@ -11,7 +11,7 @@ export default {
       return state.list.map((item) => {
         const mappedLabels = item.labels.map((labelId) => {
           return rootGetters['labelList/getList'].find(({ id }) => id === labelId);
-        });
+        }).filter((label) => label);
         return { ...item, labels: mappedLabels };
       });
     },

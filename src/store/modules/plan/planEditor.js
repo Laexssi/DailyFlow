@@ -35,7 +35,7 @@ export default {
     },
     removeActivity(state, value) {
       state.activities = state.activities.filter(({ id }) => id !== value);
-      state.planEditor.activities = state.planEditor.activities.filter((id) => id !== value);
+      state.plan.activities = state.plan.activities.filter((id) => id !== value);
     },
     resetPlan(state) {
       state.plan = cloneDeep(planSchema);
@@ -57,6 +57,7 @@ export default {
       const activities = payload.activities || state.plan?.activities;
       try {
         const list = await fetchActivitiesByIds(activities);
+        console.log('updated actv', list);
         commit('setActivities', list);
         return list;
       } catch (e) {

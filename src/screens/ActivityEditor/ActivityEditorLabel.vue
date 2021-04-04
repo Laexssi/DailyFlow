@@ -19,7 +19,7 @@
             mdi-arrow-left
           </v-icon>
 
-          <span class="activity-editor__add-label__create-text">Create new label</span>
+          <span class="activity-editor__add-label__create-text">{{ editMode ? 'Edit label' : 'Create new label' }}</span>
         </div>
       </div>
 
@@ -117,6 +117,7 @@
       xLarge
       :dark="!newLabelName"
       :disabled="!newLabelName"
+      :loading="createLoading"
       @click="createLabelHandler">
         Create
 
@@ -163,7 +164,6 @@
     methods: {
       ...mapMutations({
         setCurrentLabels: 'activityEditor/setLabels',
-        addLabelToCurrentActivity: 'activityEditor/addLabel',
         setCurrentLabel: 'labelEditor/setLabel',
       }),
       ...mapActions({
@@ -182,16 +182,17 @@
         this.newLabelColor = this.currentLabel.color;
       },
       async createLabelHandler() {
+        this.createLoading = true;
         if (!this.newLabelColor) this.setRandomLabelColor();
         const newLabelId = await this.createLabel({ color: this.newLabelColor, name: this.newLabelName });
         await this.updateLabelList();
 
         const newLabel = this.allLabels.find(({ id }) => id === newLabelId);
 
-        this.addLabelToCurrentActivity(newLabel.id);
         this.selectedLabels.push(newLabel.id);
 
         this.clearData();
+        this.createLoading = false;
       },
       async saveEditedLabelHandler() {
         this.setCurrentLabel({
@@ -253,6 +254,7 @@
       newLabelName: null,
       selectedLabels: [],
       createMode: false,
+      createLoading: false,
       search: '',
     }),
     watch: {

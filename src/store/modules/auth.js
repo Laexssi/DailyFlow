@@ -37,8 +37,6 @@ export default {
       return auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
         .then(({ user, additionalUserInfo }) => {
           const userWithAdditionalInfo = { ...user, ...additionalUserInfo };
-          console.log('add', additionalUserInfo);
-          console.log('vuex user', user);
           commit('setUser', userWithAdditionalInfo);
           commit('setIsLogged', true);
           return userWithAdditionalInfo;

@@ -148,28 +148,28 @@
         addPlanActivity: 'plan/addPlanActivity',
       }),
       async createActivityHandler() {
+        const activityId = await this.createActivity();
+
         if (this.editMode) {
-          await this.editActivity();
           await this.$router.push({ name: 'library' });
           return;
         }
 
         if (this.planId) {
-          const activityId = await this.createActivity();
+          console.log('beofre newe[]', [...this.plan.activities]);
+          await this.setPlanKey({ key: 'activities', value: [...this.plan.activities, activityId] });
 
           if (this.planId === 'new') {
-            await this.setPlanKey({ key: 'activities', value: [...this.plan.activities, activityId] });
             await this.$router.replace({ name: 'plan-editor-new', params: { 'no-reset': true } });
             return;
           }
 
           await this.addPlanActivity({ activityId, planId: this.planId });
           await this.$router.go(-1);
-          await this.$router.replace({ name: 'plan-editor-edit', params: { id: this.planId } });
+          await this.$router.replace({ name: 'plan-editor-edit', params: { id: this.planId, 'no-reset': true } });
           return;
         }
 
-        await this.createActivity();
         await this.$router.push({ name: 'library' });
       },
       randomizeEmoji() {
@@ -203,7 +203,7 @@
         return this.activity.name;
       },
       currentLabels() {
-        return this.currentLabelsById.map((item) => find(this.labelList, ({ id }) => id === item));
+        return this.currentLabelsById.map((item) => find(this.labelList, ({ id }) => id === item)).filter((label) => label);
       },
       activityName: {
         get() {

@@ -19,7 +19,7 @@ export default {
   },
   getters: {
     getActivity(state) {
-      return state.activity;
+      return { ...state.activity, labels: state.activity.labels.filter((label) => label) };
     },
     getLabels(state) {
       return state.activity.labels;

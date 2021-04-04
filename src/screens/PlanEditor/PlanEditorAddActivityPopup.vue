@@ -1,7 +1,7 @@
 <template>
-  <div class="activity-editor__add-label-container">
-    <div class="activity-editor__add-label__header">
-      <div class="activity-editor__add-label__controls">
+  <div class="plan-editor__add-activity-container">
+    <div class="plan-editor__add-activity__header">
+      <div class="plan-editor__add-activity__controls">
         <span>Add activity</span>
 
         <v-icon
@@ -13,7 +13,7 @@
     </div>
 
     <div
-    class="activity-editor__input-wrapper">
+    class="plan-editor__input-wrapper">
       <v-text-field
       v-model="search"
       dark
@@ -23,13 +23,13 @@
     </div>
 
     <div
-    class="activity-editor__label-list">
+    class="plan-editor__activity-list">
       <div
       v-for="(item, idx) in filteredActivities"
-      class="activity-editor__label-list__item"
+      class="plan-editor__activity-list__item"
       :key="idx">
         <span
-        class="activity-editor__label-list__item-label__name">
+        class="plan-editor__activity-list__item__name">
           {{ item.name }}
         </span>
 
@@ -51,11 +51,8 @@
 
   export default {
     name: 'PlanEditorAddActivityPopup',
-    created() {
-      if (!this.activityList.length) {
-        this.updateActivityList();
-      }
-
+    async created() {
+      await this.updateActivityList();
       this.selectedActivities = this.activities.map(({ id }) => id);
     },
     methods: {
@@ -96,7 +93,7 @@
 </script>
 
 <style lang="scss">
-  .activity-editor__add-label-container {
+  .plan-editor__add-activity-container {
     width: 100%;
     height: 100%;;
     background-color: #333333;
@@ -105,7 +102,7 @@
     flex-direction: column;
   }
 
-  .activity-editor__add-label__header {
+  .plan-editor__add-activity__header {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -117,22 +114,21 @@
     }
   }
 
-  .activity-editor__add-label__controls {
+  .plan-editor__add-activity__controls {
     display: flex;
     flex-grow: 1;
     justify-content: space-between;
   }
 
-  .activity-editor__input-wrapper {
+  .plan-editor__input-wrapper {
     padding: 0 16px;
   }
 
-  .activity-editor__label-list {
+  .plan-editor__activity-list {
     display: flex;
     flex-direction: column;
     padding: 11px 0 28px 0;
     height: 226px;
-    overflow-y: auto;
     border-top: 1px solid white;
 
     @include between-children() {
@@ -140,7 +136,7 @@
     }
   }
 
-  .activity-editor__label-list__item {
+  .plan-editor__activity-list__item {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -148,13 +144,13 @@
     padding: 0 16px;
   }
 
-  .activity-editor__label-list__item-label {
+  .plan-editor__activity-list__item {
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
 
-  .activity-editor__label-list__item-label__name {
+  .plan-editor__activity-list__item__name {
     color: white;
     max-width: 70%;
 
