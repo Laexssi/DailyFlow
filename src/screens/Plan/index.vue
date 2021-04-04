@@ -53,10 +53,10 @@
         @complete="completeHandler"/>
 
         <div
-        v-for="activity of activities"
-        class="plan__activities-list"
-        :key="activity.id">
+        class="plan__activities-list">
           <PlanActivityCard
+          v-for="activity of activities"
+          :key="activity.id"
           :activityData="activity"
           :running="plan.running"
           :done="checkIsActivityDone(activity.id)"/>

@@ -1,149 +1,151 @@
 <template>
-  <div class="plan-editor__wrapper">
-    <div v-if="!loading" class="plan-editor">
-      <v-text-field
-      v-model="planName"
-      outlined
-      class="plan-editor__input"
-      label="Name"/>
+  <div class="main-screen__content main-screen__content--scroll">
+    <div class="plan-editor__wrapper">
+      <div v-if="!loading" class="plan-editor">
+        <v-text-field
+        v-model="planName"
+        outlined
+        class="plan-editor__input"
+        label="Name"/>
 
-      <div class="plan-editor__cooldown-container mt-1">
-        <div class="plan-editor__cooldown-row">
-          <div class="plan-editor__cooldown-controls">
-            <v-btn
-            fab
-            small
-            elevation="0"
-            color="#BDBDBD"
-            :disabled="cooldownTime === 0"
-            @click="cooldownTime--">
-              <v-icon>
-                mdi-chevron-left
-              </v-icon>
-            </v-btn>
-
-            <div class="plan-editor__cooldown-input">
-              <v-text-field
-              :value="cooldownTime"
-              @input="cooldownHandler"
-              type="number"
-              outlined
-              label="Refresh after (days)"
-              hideDetails
-              :rules="inputRules">
-                {{ cooldownTime }}
-              </v-text-field>
-            </div>
-
-            <v-btn
-            fab
-            small
-            elevation="0"
-            color="#BDBDBD"
-            @click="cooldownTime++">
-              <v-icon>
-                mdi-chevron-right
-              </v-icon>
-            </v-btn>
-          </div>
-        </div>
-
-        <div class="plan-editor__cooldown-row justify-center mt-2">
-          <div class="plan-editor__cooldown-heading mb-1 text-center">
-            <span> {{ refreshDateText }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div
-      v-if="showCreateButton"
-      class="plan-editor__create-button__wrapper">
-        <v-btn
-        xLarge
-        dark
-        rounded
-        width="100%"
-        @click="createPlanHandler">
-          {{ editMode ? 'Edit' : 'Create' }}
-        </v-btn>
-      </div>
-
-      <v-menu
-      offsetY
-      closeOnContentClick>
-        <template
-        v-slot:activator="{ on, attrs }">
-          <v-btn
-          class="plan-editor__add-activity"
-          outlined
-          large
-          width="100%"
-          v-bind="attrs"
-          v-on="on">
-            Add activities
-            <v-icon>
-              mdi-plus
-            </v-icon>
-          </v-btn>
-        </template>
-
-        <div class="plan-editor__menu-content">
-          <v-dialog
-          v-model="showAddActivityPopup"
-          maxWidth="768">
-            <template
-            v-slot:activator="{ on, attrs }">
+        <div class="plan-editor__cooldown-container mt-1">
+          <div class="plan-editor__cooldown-row">
+            <div class="plan-editor__cooldown-controls">
               <v-btn
-              dark
-              width="100%"
-              color="#333333"
-              @click="showAddActivityPopup = true"
-              v-bind="attrs"
-              v-on="on">
-                Add activity from library
-
+              fab
+              small
+              elevation="0"
+              color="#BDBDBD"
+              :disabled="cooldownTime === 0"
+              @click="cooldownTime--">
                 <v-icon>
-                  mdi-library-shelves
+                  mdi-chevron-left
                 </v-icon>
               </v-btn>
-            </template>
 
-            <PlanEditorAddActivityPopup
-            v-if="showAddActivityPopup"
-            @close="showAddActivityPopup = false"/>
-          </v-dialog>
+              <div class="plan-editor__cooldown-input">
+                <v-text-field
+                :value="cooldownTime"
+                @input="cooldownHandler"
+                type="number"
+                outlined
+                label="Refresh after (days)"
+                hideDetails
+                :rules="inputRules">
+                  {{ cooldownTime }}
+                </v-text-field>
+              </div>
 
+              <v-btn
+              fab
+              small
+              elevation="0"
+              color="#BDBDBD"
+              @click="cooldownTime++">
+                <v-icon>
+                  mdi-chevron-right
+                </v-icon>
+              </v-btn>
+            </div>
+          </div>
+
+          <div class="plan-editor__cooldown-row justify-center mt-2">
+            <div class="plan-editor__cooldown-heading mb-1 text-center">
+              <span> {{ refreshDateText }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div
+        v-if="showCreateButton"
+        class="plan-editor__create-button__wrapper">
           <v-btn
+          xLarge
           dark
+          rounded
           width="100%"
-          color="#333333"
-          @click="createNewActivityHandler">
-            Create new
-
-            <v-icon>
-              mdi-pencil
-            </v-icon>
+          @click="createPlanHandler">
+            {{ editMode ? 'Edit' : 'Create' }}
           </v-btn>
         </div>
-      </v-menu>
 
-      <div
-      class="plan__activities-list">
-        <PlanActivityCard
-        v-for="activity of activities"
-        :key="activity.id"
-        :activityData="activity"
-        :running="false"
-        :deletable="true"
-        @delete="deleteHandler($event)"/>
+        <v-menu
+        offsetY
+        closeOnContentClick>
+          <template
+          v-slot:activator="{ on, attrs }">
+            <v-btn
+            class="plan-editor__add-activity"
+            outlined
+            large
+            width="100%"
+            v-bind="attrs"
+            v-on="on">
+              Add activities
+              <v-icon>
+                mdi-plus
+              </v-icon>
+            </v-btn>
+          </template>
+
+          <div class="plan-editor__menu-content">
+            <v-dialog
+            v-model="showAddActivityPopup"
+            maxWidth="768">
+              <template
+              v-slot:activator="{ on, attrs }">
+                <v-btn
+                dark
+                width="100%"
+                color="#333333"
+                @click="showAddActivityPopup = true"
+                v-bind="attrs"
+                v-on="on">
+                  Add activity from library
+
+                  <v-icon>
+                    mdi-library-shelves
+                  </v-icon>
+                </v-btn>
+              </template>
+
+              <PlanEditorAddActivityPopup
+              v-if="showAddActivityPopup"
+              @close="showAddActivityPopup = false"/>
+            </v-dialog>
+
+            <v-btn
+            dark
+            width="100%"
+            color="#333333"
+            @click="createNewActivityHandler">
+              Create new
+
+              <v-icon>
+                mdi-pencil
+              </v-icon>
+            </v-btn>
+          </div>
+        </v-menu>
+
+        <div
+        class="plan__activities-list">
+          <PlanActivityCard
+          v-for="activity of activities"
+          :key="activity.id"
+          :activityData="activity"
+          :running="false"
+          :deletable="true"
+          @delete="deleteHandler($event)"/>
+        </div>
       </div>
-    </div>
 
-    <div v-else class="plan-editor__skeleton-wrapper">
-      <v-skeleton-loader
-      class="plan-editor__skeleton"
-      type="card"
-      maxWidth="768"/>
+      <div v-else class="plan-editor__skeleton-wrapper">
+        <v-skeleton-loader
+        class="plan-editor__skeleton"
+        type="card"
+        maxWidth="768"/>
+      </div>
     </div>
   </div>
 </template>
@@ -173,15 +175,16 @@
       console.log(this.$route.params);
       if (!this.$route.params['no-reset']) {
         this.resetPlan();
-        await this.updatePlan({ id: this.$route.params.id });
       }
 
       await this.updateActivityList();
-      await this.updatePlanActivities({ activities: this.plan.activities });
 
       if (this.$route.params.id && this.$route.params.id !== 'new') {
+        await this.updatePlan({ id: this.$route.params.id });
         this.editMode = true;
       }
+
+      await this.updatePlanActivities({ activities: this.plan.activities });
 
       this.cooldownTime = this.plan.cooldown;
       this.setShowRouterBackButton(true);
@@ -413,8 +416,7 @@
     width: 100%;
     min-width: 0;
 
-    overflow-y: auto;
-    height: 300px;
+    padding-bottom: 76px;
     @include between-children() {
       margin-bottom: 8px;
     }

@@ -105,7 +105,7 @@
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    width: 768px;
+    width: 100%;
     min-width: 0;
 
     overflow: hidden;

@@ -128,6 +128,7 @@
     display: flex;
     flex-direction: column;
     padding: 11px 0 28px 0;
+    overflow-y: auto;
     height: 226px;
     border-top: 1px solid white;
 
