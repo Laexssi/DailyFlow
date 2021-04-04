@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="plan-wrapper">
     <div
     class="main-header">
       <div class="main-header__content">
@@ -150,6 +150,8 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+
+    overflow: hidden;
   }
 
   .plan__loader-wrapper {

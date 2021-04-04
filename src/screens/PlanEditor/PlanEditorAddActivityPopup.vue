@@ -75,7 +75,7 @@
       }),
       filteredActivities() {
         if (!this.search) return this.activityList;
-        return this.activityList.filter(({ name }) => name.includes(this.search));
+        return this.activityList.filter(({ name }) => name.toLowerCase().includes(this.search.toLowerCase()));
       },
     },
     data: () => ({

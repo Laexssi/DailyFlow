@@ -148,14 +148,14 @@
         addPlanActivity: 'plan/addPlanActivity',
       }),
       async createActivityHandler() {
-        const activityId = await this.createActivity();
-
         if (this.editMode) {
+          this.editActivity();
           await this.$router.push({ name: 'library' });
           return;
         }
 
         if (this.planId) {
+          const activityId = await this.createActivity();
           console.log('beofre newe[]', [...this.plan.activities]);
           await this.setPlanKey({ key: 'activities', value: [...this.plan.activities, activityId] });
 

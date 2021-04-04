@@ -234,7 +234,7 @@
       }),
       filteredLabels() {
         if (!this.search) return this.allLabels;
-        return this.allLabels.filter(({ name }) => name.includes(this.search));
+        return this.allLabels.filter(({ name }) => name.toLowerCase().includes(this.search.toLowerCase()));
       },
       labelName: {
         get() {
