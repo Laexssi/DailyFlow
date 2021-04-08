@@ -26,8 +26,7 @@
     name: 'ActivityList',
     components: { ActivityCard },
     created() {
-      const listsData = [this.updateActivityList(), this.updateLabelList()];
-      Promise.all(listsData)
+      Promise.all([this.updateActivityList(), this.updateLabelList()])
         .then(() => {
           this.loading = false;
         })
