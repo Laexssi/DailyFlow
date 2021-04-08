@@ -157,7 +157,6 @@
     mapActions, mapMutations, mapState,
   } from 'vuex';
   import debounce from 'lodash/debounce';
-  import dayjs from 'dayjs';
 
   export default {
     name: 'PlanEditor',
@@ -172,7 +171,6 @@
       },
     },
     async created() {
-      console.log(this.$route.params);
       if (!this.$route.params['no-reset']) {
         this.resetPlan();
       }
@@ -245,11 +243,11 @@
         }, 300),
       },
       refreshDateText() {
-        if (this.expirationDate > 0) {
-          return `Will renew at ${dayjs(this.expirationDate).format('DD, MMMM')}`;
+        if (this.cooldownTime > 0) {
+          return `Will be autocompleted in ${this.cooldownTime} days after start`;
         }
 
-        return 'No renew date';
+        return 'Autocomplete is disabled';
       },
       showCreateButton() {
         return this.plan.name;
@@ -260,15 +258,15 @@
         loading: true,
         editMode: false,
         cooldownTime: 0,
-        expirationDate: 0,
         inputRules: [(v) => v >= 0],
         showAddActivityPopup: false,
       };
     },
     watch: {
       cooldownTime(value) {
-        this.expirationDate = value ? new Date(new Date().setDate(new Date().getDate() + value)).setHours(0, 0, 0) : 0;
-        this.setPlanKey({ key: 'cooldown_expiration_date', value: this.expirationDate });
+        if (!value) {
+          this.setPlanKey({ key: 'cooldown_expiration_date', value: 0 });
+        }
         this.setPlanKey({ key: 'cooldown', value });
       },
     },

@@ -14,11 +14,18 @@
           </v-btn>
         </template>
 
-        <VEmojiPicker
+        <!--        <VEmojiPicker-->
+        <!--        @select="selectEmoji"-->
+        <!--        @randomEmoji="randomEmoji"-->
+        <!--        :showCategories="false"-->
+        <!--        :continuousList="true"-->
+        <!--        :showSearch="false"-->
+        <!--        :customEmojis="emojiList"/>-->
+
+        <ActivityEditorEmojiPicker
         @select="selectEmoji"
-        :showCategories="false"
-        :continuousList="true"
-        :customEmojis="emojiList"/>
+        :emojiList="emojiList"
+        @randomEmoji="randomEmoji = $event"/>
       </v-menu>
 
       <v-text-field
@@ -93,7 +100,8 @@
 
 <script>
   import ActivityEditorLabel from './ActivityEditorLabel';
-  import { VEmojiPicker, emojisDefault } from 'v-emoji-picker';
+  import ActivityEditorEmojiPicker from './ActivityEditorEmojiPicker';
+  import { emojisDefault } from 'v-emoji-picker';
   import {
     mapGetters, mapMutations, mapActions, mapState,
   } from 'vuex';
@@ -104,8 +112,8 @@
   export default {
     name: 'ActivityEditor',
     components: {
-      VEmojiPicker,
       ActivityEditorLabel,
+      ActivityEditorEmojiPicker,
     },
     props: {
       planId: {
@@ -124,7 +132,9 @@
       this.setShowRouterBackButton(true);
     },
     mounted() {
-      this.randomizeEmoji();
+      if (!this.editMode) {
+        this.randomizeEmoji();
+      }
     },
     beforeRouteLeave(to, from, next) {
       this.setShowRouterBackButton(false);
@@ -156,7 +166,6 @@
 
         if (this.planId) {
           const activityId = await this.createActivity();
-          console.log('beofre newe[]', [...this.plan.activities]);
           await this.setPlanKey({ key: 'activities', value: [...this.plan.activities, activityId] });
 
           if (this.planId === 'new') {

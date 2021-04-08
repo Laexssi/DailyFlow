@@ -57,7 +57,6 @@ export default {
       const activities = payload.activities || state.plan?.activities;
       try {
         const list = await fetchActivitiesByIds(activities);
-        console.log('updated actv', list);
         commit('setActivities', list);
         return list;
       } catch (e) {

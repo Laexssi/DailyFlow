@@ -45,6 +45,9 @@ export default {
     setPlanState(state, isRunning) {
       state.plan.running = isRunning;
     },
+    setPlanExpirationDate(state, date) {
+      state.plan.cooldown_expiration_date = date;
+    },
   },
   actions: {
     async updatePlan({ commit }, payload) {
@@ -119,12 +122,16 @@ export default {
       }
     },
     async updatePlanRunning({ state, commit }, payload) {
-      const id = state.plan?.id || payload.id;
-      const { running } = payload;
+      const id = payload.id || state.plan?.id;
+      const { running, cooldown, saveToState = true } = payload;
+      const expirationDate = (cooldown && running) ? new Date(new Date().setDate(new Date().getDate() + cooldown)).setHours(0, 0, 0) : 0;
       try {
-        const isRunning = await updatePlanRunningRequest(id, running);
-        commit('setPlanState', isRunning);
-        return isRunning;
+        await updatePlanRunningRequest(id, running, expirationDate);
+        if (saveToState) {
+          commit('setPlanState', running);
+          commit('setPlanExpirationDate', expirationDate);
+        }
+        return id;
       } catch (e) {
         return Promise.reject(e);
       }

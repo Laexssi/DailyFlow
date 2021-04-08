@@ -179,12 +179,13 @@ export async function cancelCompletePlanActivityRequest(plan, activityId) {
   return doneActivitiesCount;
 }
 
-export async function updatePlanRunningRequest(id, state) {
+export async function updatePlanRunningRequest(id, state, expirationDate) {
   const planRef = firestore.collection('plan').doc(id);
   await planRef.update({
     running: state,
+    cooldown_expiration_date: expirationDate,
   });
-  return state;
+  return id;
 }
 
 export async function completePlanRequest(plan) {

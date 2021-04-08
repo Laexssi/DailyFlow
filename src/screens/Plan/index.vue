@@ -119,10 +119,10 @@
         await this.$router.push({ name: 'plans' });
       },
       async startHandler() {
-        await this.updatePlanRunning({ running: true });
+        await this.updatePlanRunning({ running: true, cooldown: this.plan.cooldown });
       },
       async cancelHandler() {
-        await this.updatePlanRunning({ running: false });
+        await this.updatePlanRunning({ running: false, cooldown: this.plan.cooldown });
         await this.resetPlanActivitiesCounter();
       },
       async completeHandler() {

@@ -194,6 +194,12 @@
     justify-content: space-between;
 
     align-items: center;
+
+    span {
+      text-align: center;
+      font-size: 30px;
+      line-height: 30px;
+    }
   }
 
   .activity-card__name {

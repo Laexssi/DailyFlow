@@ -25,7 +25,7 @@
     <div
     v-if="plan.running"
     class="plan__activities-expiration">
-      List will be completed on {{ expirationDate }}
+      {{ expirationText }}
     </div>
 
     <v-btn
@@ -97,12 +97,13 @@
       completeStatus() {
         return (this.plan.done_activities.length / this.plan.activities.length) * 100;
       },
-      expirationDate() {
-        return dayjs(this.plan.cooldown_expiration_date).format('DD, MMMM');
+      expirationText() {
+        const { cooldown_expiration_date } = this.plan;
+        if (!cooldown_expiration_date) return 'Autocomplete disabled';
+        return `List will be completed on ${dayjs(cooldown_expiration_date).format('DD, MMMM')}`;
       },
     },
     data: () => ({
-      now: Date.now(),
     }),
   };
 </script>
