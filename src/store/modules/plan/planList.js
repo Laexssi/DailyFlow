@@ -31,9 +31,9 @@ export default {
               return;
             }
             plansToUpdate.push(dispatch(
-              'plan/updatePlanRunning',
+              'plan/completePlan',
                {
-                 running: false, cooldown_expiration_date: 0, id, saveToState: false,
+                id, saveToState: false,
                },
                { root: true },
             ));

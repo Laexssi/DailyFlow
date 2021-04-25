@@ -136,12 +136,15 @@ export default {
         return Promise.reject(e);
       }
     },
-    async completePlan({ state, commit }, payload) {
-      const plan = state.plan || payload.plan;
+    async completePlan({ state, commit }, payload = {}) {
+      const plan = payload.plan || state.plan;
+      const { saveToState = true } = payload;
       try {
           const res = await completePlanRequest(plan);
-          commit('setPlanState', false);
-          commit('resetDoneActivity');
+          if (saveToState) {
+            commit('setPlanState', false);
+            commit('resetDoneActivity');
+          }
           return res;
       } catch (e) {
         return Promise.reject();

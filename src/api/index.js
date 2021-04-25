@@ -199,6 +199,7 @@ export async function completePlanRequest(plan) {
     running: false,
     done_activities: [],
     complete: firebase.firestore.FieldValue.arrayUnion({ ...completeData }),
+    cooldown_expiration_date: 0,
   });
   return completeData;
 }
