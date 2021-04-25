@@ -114,6 +114,7 @@
     flex-direction: column;
     flex-shrink: 0;
     width: 100%;
+    max-width: 768px;
 
     overflow: hidden;
 

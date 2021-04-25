@@ -43,25 +43,33 @@
 
     <div
     class="main-screen__content main-screen__content--scroll">
-      <div
-      v-if="!loading"
-      class="plan">
-        <PlanCard
-        :plan="plan"
-        @start="startHandler"
-        @cancel="cancelHandler"
-        @complete="completeHandler"/>
-
+      <template v-if="!loading">
         <div
-        class="plan__activities-list">
-          <PlanActivityCard
-          v-for="activity of activities"
-          :key="activity.id"
-          :activityData="activity"
-          :running="plan.running"
-          :done="checkIsActivityDone(activity.id)"/>
+        class="plan">
+          <PlanCard
+          :plan="plan"
+          @start="startHandler"
+          @cancel="cancelHandler"
+          @complete="completeHandler"/>
+
+          <div
+          v-if="activities.length"
+          class="plan__activities-list">
+            <PlanActivityCard
+            v-for="activity of activities"
+            :key="activity.id"
+            :activityData="activity"
+            :running="plan.running"
+            :done="checkIsActivityDone(activity.id)"/>
+          </div>
+
+          <div
+          v-else
+          class="plan__activities-list__text">
+            <p>Add activities to this plan</p>
+          </div>
         </div>
-      </div>
+      </template>
 
       <div
       v-else
@@ -192,5 +200,16 @@
     @include between-children() {
       margin-bottom: 8px;
     }
+  }
+
+  .plan__activities-list__text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+    padding: 16px;
   }
 </style>

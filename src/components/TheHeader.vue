@@ -15,12 +15,40 @@
           </v-icon>
         </v-btn>
 
-        <div class="main-header__navigation-name">
+        <div
+        v-if="!showSearchInput"
+        class="main-header__navigation-name">
           {{ getRouteNameText() }}
         </div>
       </div>
 
+      <v-text-field
+      v-if="showSearchInput"
+      v-model="searchQueryValue"
+      placeholder="Search"
+      dense
+      hideDetails
+      appendIcon="mdi-magnify"/>
+
       <div class="main_header__controls">
+        <v-btn
+        v-if="showSearchButton && !showSearchInput"
+        icon
+        @click="showSearchInput = true">
+          <v-icon color="black">
+            mdi-magnify
+          </v-icon>
+        </v-btn>
+
+        <v-btn
+        v-if="showSearchButton && showSearchInput"
+        icon
+        @click="closeSearchHandler">
+          <v-icon color="black">
+            mdi-close
+          </v-icon>
+        </v-btn>
+
         <v-avatar
         v-if="user"
         size="32">
@@ -42,13 +70,15 @@
 </template>
 
 <script>
-  import { mapActions, mapState } from 'vuex';
+  import { mapActions, mapMutations, mapState } from 'vuex';
   import capitalizeFirstLetter from 'helpers/capitalizeFirstLetter';
+  import debounce from 'lodash/debounce';
 
   export default {
     name: 'TheHeader',
     methods: {
       ...mapActions({ logout: 'auth/logout' }),
+      ...mapMutations({ setSearchQuery: 'appState/setSearchQuery' }),
       logoutHandler() {
         this.logout();
       },
@@ -63,17 +93,30 @@
           'plan-editor-edit': 'Edit plan',
         }[this.$route.name] || capitalizeFirstLetter(this.$route.name);
       },
+      closeSearchHandler() {
+        this.setSearchQuery('');
+        this.showSearchInput = false;
+      },
     },
     computed: {
-      ...mapState('appState', ['showRouterBackButton']),
+      ...mapState('appState', ['showRouterBackButton', 'showSearchButton', 'searchQuery']),
       ...mapState('auth', ['user']),
       showHeader() {
         const routesWithoutHeader = ['login', 'plan'];
         return !routesWithoutHeader.includes(this.$route.name);
       },
+      searchQueryValue: {
+        get() {
+          return this.searchQuery;
+        },
+        set: debounce(function set(value) {
+          this.setSearchQuery(value);
+        }, 300),
+      },
     },
     data: () => ({
       capitalizeFirstLetter,
+      showSearchInput: false,
     }),
   };
 </script>
