@@ -2,7 +2,9 @@
 node_modules
 /dist
 /src/fb-config
-
+firebase.json
+.firebaserc
+.firebase
 
 # local env files
 .env.local
