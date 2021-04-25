@@ -93,10 +93,12 @@
       PlanActivityCard,
     },
     async created() {
-      await this.updatePlan({ id: this.$route.params.id });
-
-      if (!this.plan) {
+      try {
+        await this.updatePlan({ id: this.$route.params.id });
+        if (!this.plan) throw Error('no plan');
+      } catch (e) {
         await this.$router.push({ name: 'plans' });
+        return;
       }
 
       await this.updatePlanActivities({ activities: this.plan.activities });

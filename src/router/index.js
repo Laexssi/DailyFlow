@@ -72,7 +72,7 @@ const routes = [
   },
   {
     path: '*',
-    redirect: { name: 'plans' },
+    redirect: { name: 'library' },
   },
 ];
 

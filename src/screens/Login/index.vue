@@ -27,7 +27,7 @@
         this.loader = true;
         try {
           await this.loginWithGoogle();
-          await this.$router.push({ name: 'plan' });
+          await this.$router.push({ name: 'library' });
         } finally {
           this.loader = false;
         }

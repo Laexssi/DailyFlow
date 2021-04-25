@@ -163,9 +163,9 @@
           await this.$router.push({ name: 'library' });
           return;
         }
+        const activityId = await this.createActivity();
 
         if (this.planId) {
-          const activityId = await this.createActivity();
           await this.setPlanKey({ key: 'activities', value: [...this.plan.activities, activityId] });
 
           if (this.planId === 'new') {
