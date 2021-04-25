@@ -164,6 +164,7 @@
   }
 
   .main_header__controls {
+    display: flex;
     margin-left: auto;
 
     @include between-children() {
