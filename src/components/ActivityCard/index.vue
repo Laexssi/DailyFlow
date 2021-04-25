@@ -1,7 +1,7 @@
 <template>
   <div class="activity-card">
     <div class="activity-card__header">
-      <span>
+      <span class="activity-card__header-text">
         {{ activityData.emoji }}
       </span>
 
@@ -195,7 +195,7 @@
 
     align-items: center;
 
-    span {
+    .activity-card__header-text {
       text-align: center;
       font-size: 30px;
       line-height: 30px;
