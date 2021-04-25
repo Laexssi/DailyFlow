@@ -22,35 +22,36 @@
         </v-icon>
       </v-btn>
 
-      <v-menu
-      offsetY
-      :nudgeTop="6"
-      top
-      left>
-        <template
-        v-slot:activator="{ on, attrs }">
-          <v-btn
-          fab
-          xSmall
-          elevation="0"
-          color="#333333"
-          v-bind="attrs"
-          v-on="on">
-            <v-icon
-            :color="'white'"
-            size="20">
-              mdi-dots-horizontal
-            </v-icon>
-          </v-btn>
-        </template>
+      <!--      <v-menu-->
+      <!--      offsetY-->
+      <!--      :nudgeTop="6"-->
+      <!--      top-->
+      <!--      left>-->
+      <!--        <template-->
+      <!--        v-slot:activator="{ on, attrs }">-->
+      <!--          <v-btn-->
+      <!--          fab-->
+      <!--          xSmall-->
+      <!--          elevation="0"-->
+      <!--          color="#333333"-->
+      <!--          v-bind="attrs"-->
+      <!--          v-on="on">-->
+      <!--            <v-icon-->
+      <!--            :color="'white'"-->
+      <!--            size="20">-->
+      <!--              mdi-dots-horizontal-->
+      <!--            </v-icon>-->
+      <!--          </v-btn>-->
+      <!--        </template>-->
 
-        <div class="navigation-menu__content">
-          MORE
-        </div>
-      </v-menu>
+      <!--        <div class="navigation-menu__content">-->
+      <!--          MORE-->
+      <!--        </div>-->
+      <!--      </v-menu>-->
     </div>
 
     <v-btn
+    v-if="showAddButton"
     fab
     elevation="0"
     color="#333333"
@@ -100,6 +101,9 @@
                   route: 'analytics',
                   isActive: this.$route.name === 'analytics',
                 }];
+      },
+      showAddButton() {
+        return this.$route.name !== 'analytics';
       },
     },
     data: () => ({
