@@ -1,4 +1,4 @@
-DialyFlow
+DailyFlow
 
 https://flowdaily.web.app/login
 
