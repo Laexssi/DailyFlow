@@ -40,6 +40,7 @@
             color="grey darken-2"
             v-bind="attrs"
             v-on="on"
+            small
             class="mr-1">
               <span>{{ typeToLabel[type] }}</span>
 
@@ -68,12 +69,12 @@
           </v-list>
         </v-menu>
 
-        <v-btn
-        outlined
-        color="grey darken-2"
-        @click="setToday">
-          Today
-        </v-btn>
+        <!--        <v-btn-->
+        <!--        outlined-->
+        <!--        color="grey darken-2"-->
+        <!--        @click="setToday">-->
+        <!--          Today-->
+        <!--        </v-btn>-->
       </v-toolbar>
     </v-sheet>
 
@@ -150,10 +151,10 @@
         this.focus = date;
         this.type = 'day';
       },
-      setToday() {
-        this.focus = '';
-        this.type = 'day';
-      },
+      // setToday() {
+      //   this.focus = '';
+      //   this.type = 'day';
+      // },
       prev() {
         this.$refs.calendar.prev();
       },

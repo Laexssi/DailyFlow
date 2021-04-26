@@ -1,7 +1,9 @@
 <template>
   <div class="activity-editor__wrapper">
     <div v-if="!loading" class="activity-editor">
-      <v-menu offsetY>
+      <v-menu
+      offsetY
+      maxWidth="325px">
         <template
         v-slot:activator="{ on, attrs }">
           <v-btn
